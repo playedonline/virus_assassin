@@ -15,7 +15,7 @@ public class Figure : MonoBehaviour {
         if(m_isInfected)
             return;
 
-        Debug.LogError("Infected!");
+        Debug.Log("Infected!");
         m_isInfected = true;
         m_infectedTime = Time.realtimeSinceStartup;
     }
