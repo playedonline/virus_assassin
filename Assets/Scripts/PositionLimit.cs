@@ -1,8 +1,6 @@
-using System;
 using UnityEngine;
-using UnitySteer2D.Behaviors;
 
-public class WondererPositionLimits : MonoBehaviour {
+public class PositionLimit : MonoBehaviour {
     public float minX;
     public float maxX;
     public float minY;
