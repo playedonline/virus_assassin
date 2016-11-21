@@ -5,15 +5,16 @@ using DG.Tweening;
 public class Virus : MonoBehaviour {
 	Rigidbody2D body;
 	Animator animator;
-	Transform spriteObject;
+	Transform spriteTransform;
+	HostFigure currentHost;
 	bool isFlying;
 
 	void Start () {
 		body = GetComponent<Rigidbody2D> ();
 		body.drag = 3f;
 		animator = GetComponentInChildren<Animator> ();
-		spriteObject = transform.Find ("Sprite");
-		SetIdle ();
+		spriteTransform = transform.Find ("Sprite");
+		SetIdleOutOfHost ();
 
 	}
 
@@ -23,26 +24,52 @@ public class Virus : MonoBehaviour {
 		body.velocity = (direction * 30);
 		//transform.localRotation
 		animator.Play("Virus Flying");
-		spriteObject.localScale = Vector3.one;
-		//spriteObject.localEulerAngles = new Vector3 (0, 0, -angle);
-		DOTween.Kill (spriteObject);
-		spriteObject.DOScale (new Vector3 (1.7f, 0.2f, 0), 0.2f).SetEase(Ease.InOutSine).SetLoops (-1, LoopType.Yoyo);
-
+		transform.parent = null;
+		spriteTransform.localScale = Vector3.one;
+		transform.localEulerAngles = new Vector3 (0, 0, 0);
+		DOTween.Kill (spriteTransform);
+		spriteTransform.DOScale (new Vector3 (1.7f, 0.2f, 0), 0.2f).SetEase(Ease.InOutSine).SetLoops (-1, LoopType.Yoyo);
+		currentHost = null;
 		isFlying = true;
 	}
 
 	void Update()
 	{
 		if (body.velocity.magnitude < 5 && isFlying)
-			SetIdle ();
+			SetIdleOutOfHost ();
 	}
 		
-	void SetIdle()
-	{
+	void SetIdleOutOfHost()
+	{		
 		isFlying = false;
 		animator.Play ("Virus Idle");
-		spriteObject.localScale = Vector3.one;
-		DOTween.Kill (spriteObject);
-		spriteObject.DOScale (new Vector3 (1.3f, 0.7f, 0), 0.25f).SetEase(Ease.InOutSine).SetLoops (-1, LoopType.Yoyo);
+		spriteTransform.localScale = Vector3.one;
+		DOTween.Kill (spriteTransform);
+		spriteTransform.DOScale (new Vector3 (1.3f, 0.7f, 0), 0.25f).SetEase(Ease.InOutSine).SetLoops (-1, LoopType.Yoyo);
+	}
+
+	void SetHost(HostFigure newHost)
+	{
+		currentHost = newHost;
+		DOTween.Kill (spriteTransform);
+		transform.parent = newHost.transform;
+		spriteTransform.localScale = Vector3.zero;
+		transform.localPosition = Vector3.zero;
+		body.velocity = Vector2.zero;
+		isFlying = false;
+	}
+
+
+	void OnTriggerEnter2D(Collider2D other)
+	{
+		if (!isFlying)
+			return;
+		
+		Debug.Log ("OntriggerEnter");
+		HostFigure hostHit = other.GetComponent<HostFigure> ();
+		if (hostHit != null) {
+			hostHit.OnHit ();
+			SetHost (hostHit);
+		}
 	}
 }

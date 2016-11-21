@@ -13,8 +13,8 @@ public class GameManager : MonoBehaviour {
     }
 
     void Awake(){
-        m_wandererPrefab = Resources.Load("Wanderer");
-
+        m_wandererPrefab = Resources.Load("Soldier");
+		Application.targetFrameRate = 60;
         Init();
     }
 }

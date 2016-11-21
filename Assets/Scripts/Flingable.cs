@@ -39,6 +39,7 @@ public class Flingable : MonoBehaviour {
 			aimAngle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg;
 			if(aimAngle < 0) aimAngle += 360;
 
+			aimAngle -= transform.rotation.eulerAngles.z;
 			coneSprite.transform.localEulerAngles = new Vector3 (0, 0, aimAngle);
 		}
 			

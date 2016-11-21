@@ -23,13 +23,13 @@ public class SmoothCameraFollow : MonoBehaviour {
 		if (target) {
 			Vector3 posNoZ = transform.position;
 			posNoZ.z = target.position.z;
-//
+
 			Vector3 targetDirection = (target.position - posNoZ);
 
-			interpVelocity = targetDirection.magnitude * 5f;
+			interpVelocity = targetDirection.magnitude * 30f;
 
 			targetPos = transform.position + (targetDirection.normalized * interpVelocity * Time.deltaTime); 
-
+			targetPos.y = Mathf.Clamp (targetPos.y, -1, 9999);
 			transform.position = Vector3.Lerp (transform.position, targetPos + offset, 0.5f);
 			//transform.position = new Vector3(target.position.x,target.position.y,-10);
 		}
