@@ -38,9 +38,6 @@ public class Figure : MonoBehaviour {
     void Update() {
         m_spriteRenderer.transform.rotation = Quaternion.identity;
 
-        if(transform.localPosition.y >= 4)
-            Infect();
-
         if (m_isInfected) {
             Debug.Log("TimeLeftToLive: " + TimeLeftToLive());
             if(TimeLeftToLive() < 0)
