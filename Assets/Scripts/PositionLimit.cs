@@ -1,12 +1,12 @@
 using UnityEngine;
 
 public class PositionLimit : MonoBehaviour {
-    public float minX;
-    public float maxX;
-    public float minY;
-    public float maxY;
+    public float minX = -5.5f;
+    public float maxX = 5.5f;
+    public float minY = -9.8f;
+    public float maxY = 9.8f;
 
-    void Update(){
+    void Update() {
         if (transform.position.x < minX)
             transform.position = new Vector3(minX, transform.position.y, transform.position.z);
         else if (transform.position.x > maxX)
