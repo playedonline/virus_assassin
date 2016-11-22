@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour {
 	public static float SCREEN_HEIGHT ;
 	public static float HORIZONTAL_TILES = 8;
 	public static float VERTICAL_TILES = 4;
+	public const float comboActiveThreshold = 1.2f;
 
 	public static GameManager Instance;
 	public int score;
@@ -30,7 +31,10 @@ public class GameManager : MonoBehaviour {
     private List<HostFigure> hostFigures = new List<HostFigure>();
 	private int comboCounter;
 	private float comboStartTime;
-    public GameOver gameOver;
+    public GameOver gameOverScreen;
+
+	public Text comboText;
+	public CanvasGroup comboCanvasGroup;
 
     void Awake(){
 		GameManager.Instance = this;
@@ -38,7 +42,6 @@ public class GameManager : MonoBehaviour {
 		SCREEN_HEIGHT = Camera.main.orthographicSize * 2;    
 		SCREEN_WIDTH = SCREEN_HEIGHT * Screen.width / Screen.height;
 
-		Debug.Log (SCREEN_HEIGHT + "," + SCREEN_WIDTH +TopLeft + BottomRight);
 		canvas = GameObject.Find ("Canvas").GetComponent<Canvas> ();
          m_hostFigurePrefab = Resources.Load("Soldier");
 
@@ -66,6 +69,8 @@ public class GameManager : MonoBehaviour {
             }
         }
 
+		comboText = GameObject.Find ("comboText").GetComponent<Text> ();
+		comboCanvasGroup = GameObject.Find ("ComboMeter").GetComponent<CanvasGroup> ();
 		SpawnNewTarget ();
 
     }
@@ -77,9 +82,10 @@ public class GameManager : MonoBehaviour {
         if(hostFigures.Count < 14 && Random.value < 0.01)
             ReSpawnSoldier();
 
-		if (Time.time - comboStartTime > 1.2f && comboCounter > 0) {
+		if (Time.time - comboStartTime > comboActiveThreshold && comboCounter > 0) {
 			// combo broken
-			ShowFloatingText (player.transform.position + Vector3.up * 2, "COMBO BROKEN!", 1, false, true);
+			if (comboCounter > 1)
+				ShowFloatingText (player.transform.position + Vector3.up * 2, comboCounter + " KILL COMBO" , 0.8f, false, true);
 			score += comboCounter;
 			comboCounter = 0;
 		}
@@ -95,19 +101,32 @@ public class GameManager : MonoBehaviour {
 			SpawnNewTarget ();
 		}
 			
-		comboStartTime = Time.time;
-
-		comboCounter += 1;
-		ShowFloatingText(hf.transform.position, comboCounter.ToString(), 1, true);
-
+		UpdateComboCounter (hf.transform.position + Vector3.up * 3f);
 		if (comboCounter % 5 == 0 && comboCounter > 0)
-			ShowFloatingText (player.transform.position + Vector3.up * 3, "AWESOME!", 1, false, true);
+			ShowFloatingText (player.transform.position + Vector3.up * 3, "AWESOME! +" + 5, 0.8f, false, true);
 	}
 
+	private void UpdateComboCounter(Vector3 newPosition)
+	{
+		comboStartTime = Time.time;		
+		comboCounter += 1;
+		comboText.text = comboCounter.ToString ();
+		comboCanvasGroup.alpha = 1;
+		DOTween.Kill (comboCanvasGroup);
+		comboCanvasGroup.DOFade (0, 0.4f).SetDelay(0.8f);
+
+		comboCanvasGroup.transform.DOPunchScale (Vector3.one * 0.3f, 0.5f);
+		if (comboCounter == 1)
+			comboCanvasGroup.transform.position = newPosition;
+		else
+			comboCanvasGroup.transform.DOMove (newPosition, 0.2f).SetEase (Ease.OutSine);
+		//ShowFloatingText(hf.transform.position, comboCounter.ToString(), 1, true);		
+			
+	}
 
     public void OnVirusDie(){
         targetPointer.Init (null, null);
-        gameOver.gameObject.SetActive(true);
+		gameOverScreen.gameObject.SetActive(true);
     }
 
     public void ReSpawnSoldier(){
@@ -167,18 +186,18 @@ public class GameManager : MonoBehaviour {
 	{
 		Text floatingLabel = Instantiate<GameObject> (Resources.Load<GameObject> ("FloatingLabel")).GetComponent<Text>();
 		floatingLabel.text = text;
-		floatingLabel.rectTransform.position = Camera.main.WorldToScreenPoint (origin);
-		floatingLabel.rectTransform.SetParent (canvas.transform, true);
-		floatingLabel.rectTransform.localScale = Vector3.one * scaleFactor;
+		floatingLabel.transform.position = origin;
+		floatingLabel.transform.SetParent (canvas.transform, true);
+		floatingLabel.transform.localScale = Vector3.one * scaleFactor;
 
 		if (rotate)
-			floatingLabel.transform.DORotate (new Vector3 (0, 0, 5), 0.2f).SetEase(Ease.OutBack);
+			floatingLabel.transform.DORotate (new Vector3 (0, 0, 5 * Random.value < 0.5f ? 1 : -1), 0.3f).SetEase(Ease.OutBack);
 		
 		if (punch)
 			floatingLabel.transform.DOPunchScale (Vector3.one * 0.3f, 1);
 		
 		floatingLabel.DOFade (0f, 1.5f);
-		floatingLabel.rectTransform.DOLocalMoveY (100, 1).SetRelative(true);
+		floatingLabel.transform.DOLocalMoveY (5, 1).SetRelative(true);
 		Destroy (floatingLabel.gameObject, 3);
 
 	}
