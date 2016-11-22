@@ -54,7 +54,17 @@ public class Virus : MonoBehaviour {
 			SetIdleOutOfHost ();
 
 		if (currentHost == null && healthbar.isEmpty)
-			Die ();		
+			Die ();
+
+        if(transform.localPosition.x < GameManager.Instance.TopLeft.x)
+            body.velocity = new Vector2(Mathf.Abs(body.velocity.x), body.velocity.y);
+        else if(transform.localPosition.x > GameManager.Instance.BottomRight.x)
+            body.velocity = new Vector2(-Mathf.Abs(body.velocity.x), body.velocity.y);
+
+        if(transform.localPosition.y < GameManager.Instance.BottomRight.y)
+            body.velocity = new Vector2(body.velocity.x, Mathf.Abs(body.velocity.y));
+		else if(transform.localPosition.y > GameManager.Instance.TopLeft.y)
+            body.velocity = new Vector2(body.velocity.x, -Mathf.Abs(body.velocity.y));
 	}
 		
 	public void Die()
