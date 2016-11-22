@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour {
 	public static float SCREEN_WIDTH ;
 	public static float SCREEN_HEIGHT ;
-	public static float HORIZONTAL_TILES = 6;
+	public static float HORIZONTAL_TILES = 8;
 	public static float VERTICAL_TILES = 4;
 
 	public static GameManager Instance;
@@ -55,7 +55,7 @@ public class GameManager : MonoBehaviour {
             bgsr.sortingLayerName = "Background";
             bgsr.sortingOrder = -1;
 
-            for(int i = 0 ; i < Random.Range(1,2) ; i++)
+            for(int i = 0 ; i < Random.Range(1, 2) ; i++)
                 SpawnNewSoldier(new Vector3(Random.Range(x - bgSprite.bounds.extents.x, x + bgSprite.bounds.extents.x), Random.Range(y - bgSprite.bounds.extents.y, y + bgSprite.bounds.extents.y), 0));
 
             x += bgSprite.bounds.size.x;
@@ -73,7 +73,7 @@ public class GameManager : MonoBehaviour {
 	{
 		scoreText.text = score.ToString ();
 
-        if(hostFigures.Count < 10 && Random.value < 0.01)
+        if(hostFigures.Count < 14 && Random.value < 0.01)
             ReSpawnSoldier();
 	}
 
