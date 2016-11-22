@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.UI;
+using DG.Tweening;
 
 public class GameManager : MonoBehaviour {
     public const float SCREEN_WIDTH = 10.8f;
@@ -6,6 +8,9 @@ public class GameManager : MonoBehaviour {
     public const float HORIZONTAL_SCREENS = 3;
     public const float VERTICAL_SCREENS = 3;
     public int regularFiguresAmount = 0;
+
+	public static GameManager Instance;
+	public int score;
 
     private Object m_hostFigurePrefab;
     public Vector3 TopLeft {get {
@@ -19,22 +24,24 @@ public class GameManager : MonoBehaviour {
     public HostFigure mainTarget;
     private OffscreenPointer targetPointer;
     private Virus player;
-
+	public Text scoreText;
+	private Canvas canvas;
     public Sprite bgSprite;
 
     void Awake(){
+		GameManager.Instance = this;
+
+		canvas = GameObject.Find ("Canvas").GetComponent<Canvas> ();
         regularFiguresAmount = 45;
         m_hostFigurePrefab = Resources.Load("Soldier");
-        Vector3 topLeft = TopLeft;
-        Vector3 bottomRight = BottomRight;
-
+        
         Application.targetFrameRate = 60;
         player = GameObject.Find ("Virus").GetComponent<Virus> ();
 
-        float x = topLeft.x;
-        float y = topLeft.y;
+        float x = TopLeft.x;
+        float y = TopLeft.y;
         GameObject bg = new GameObject("bg");
-        while(y > bottomRight.y){
+        while(y > BottomRight.y){
             SpriteRenderer bgsr = new GameObject("bg").AddComponent<SpriteRenderer>();
             bgsr.transform.parent = bg.transform;
             bgsr.transform.localPosition = new Vector3(x, y);
@@ -42,24 +49,50 @@ public class GameManager : MonoBehaviour {
             bgsr.sortingOrder = -1;
 
             x += bgSprite.bounds.size.x;
-            if(x > bottomRight.x){
-                x = topLeft.x;
+            if(x > BottomRight.x){
+                x = TopLeft.x;
                 y -= bgSprite.bounds.size.y;
             }
         }
 
         for(int i = 0 ; i < regularFiguresAmount ; i++){
             GameObject hostFigure = Instantiate(m_hostFigurePrefab) as GameObject;
-            hostFigure.transform.localPosition = new Vector3(Random.Range(topLeft.x, bottomRight.x), Random.Range(bottomRight.y, topLeft.y), 0);
-            hostFigure.GetComponent<HostFigure>().Init(HostFigureType.Soldier, topLeft, bottomRight);
+			hostFigure.transform.localPosition = new Vector3(Random.Range(TopLeft.x, BottomRight.x), Random.Range(BottomRight.y, TopLeft.y), 0);
+			hostFigure.GetComponent<HostFigure>().Init(HostFigureType.Soldier, TopLeft, BottomRight);
         }
 
-        mainTarget = Instantiate<GameObject>(Resources.Load<GameObject>("Soldier")).GetComponent<HostFigure>();
-        mainTarget.name = "Trump";
-        mainTarget.transform.localPosition = new Vector3(Random.Range(-SCREEN_WIDTH, SCREEN_WIDTH), Random.Range(SCREEN_HEIGHT * 2, SCREEN_HEIGHT * 3), 0);
-        mainTarget.Init (HostFigureType.Trump, topLeft, bottomRight);
-
-        targetPointer = transform.GetComponentInChildren<OffscreenPointer>();
-        targetPointer.Init (mainTarget.transform, player.transform);
+		SpawnNewTarget ();
+        
     }
+
+	void Update()
+	{
+		scoreText.text = score.ToString ();
+	}
+
+	public void SpawnNewTarget()
+	{
+		Debug.Log ("Spawn new target");
+		mainTarget = Instantiate<GameObject>(Resources.Load<GameObject>("Soldier")).GetComponent<HostFigure>();
+		mainTarget.name = "Trump";
+		mainTarget.transform.localPosition = new Vector3(Random.Range(-SCREEN_WIDTH, SCREEN_WIDTH), Random.Range(SCREEN_HEIGHT * 2, SCREEN_HEIGHT * 3), 0);
+		mainTarget.Init (HostFigureType.Trump, TopLeft, BottomRight);
+
+		targetPointer = transform.GetComponentInChildren<OffscreenPointer>();
+		targetPointer.Init (mainTarget.transform, player.transform);
+	}
+		
+	public void ShowFloatingText(Vector3 origin, string text)
+	{
+		Text floatingLabel = Instantiate<GameObject> (Resources.Load<GameObject> ("FloatingLabel")).GetComponent<Text>();
+		floatingLabel.text = text;
+		floatingLabel.rectTransform.position = Camera.main.WorldToScreenPoint (origin);
+		floatingLabel.rectTransform.SetParent (canvas.transform, true);
+		floatingLabel.rectTransform.localScale = Vector3.one;
+
+		floatingLabel.DOFade (0, 2);
+		floatingLabel.rectTransform.DOLocalMoveY (200, 1).SetRelative(true);
+		Destroy (floatingLabel.gameObject, 3);
+			
+	}
 }

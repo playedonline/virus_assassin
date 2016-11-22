@@ -41,7 +41,7 @@ public class Virus : MonoBehaviour {
 	void LeaveHost()
 	{
 		if (currentHost != null) {
-			healthbar.Init (4);
+			healthbar.Init (2);
 			currentHost = null;
 		}
 	}
@@ -54,9 +54,9 @@ public class Virus : MonoBehaviour {
 			Die ();		
 	}
 		
-	void Die()
+	public void Die()
 	{
-		
+		UnityEngine.SceneManagement.SceneManager.LoadScene ("main");
 	}
 
 	void SetIdleOutOfHost()
@@ -83,7 +83,7 @@ public class Virus : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D other)
 	{
-		if (currentHost != null || Time.time - lastLaunchTime < 0.1f)
+		if (currentHost != null)
 			return;
 		
 		HostFigure hostHit = other.GetComponentInParent<HostFigure> ();

@@ -23,6 +23,7 @@ public class Flingable : MonoBehaviour {
 			didInitiatedFling = true;
 			flingStartPosition = mousePos;
 			coneSprite.enabled = true;
+			DOTween.Kill (Camera.main);
 			Camera.main.DOOrthoSize (14, 0.4f);
 		}
 		if (Input.GetMouseButtonUp (0) && didInitiatedFling) {
@@ -30,6 +31,7 @@ public class Flingable : MonoBehaviour {
 			didInitiatedFling = false;
 			coneSprite.enabled = false;
 			GetComponent<Virus> ().Launch (aimDirection.normalized, aimAngle);
+			DOTween.Kill (Camera.main);
 			Camera.main.DOOrthoSize (10, 0.3f);
 
 		}

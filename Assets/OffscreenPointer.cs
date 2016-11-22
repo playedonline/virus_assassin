@@ -27,11 +27,14 @@ public class OffscreenPointer : MonoBehaviour {
 
 		Vector3 targetViewportPosition = Camera.main.WorldToViewportPoint (target.transform.position);
 		bool inViewport = (targetViewportPosition.x > 0 && targetViewportPosition.x < 1 && targetViewportPosition.y > 0 && targetViewportPosition.y < 1);
-		gameObject.SetActive (!inViewport);
+		//gameObject.SetActive (!inViewport);
 		transform.localEulerAngles = new Vector3 (0, 0, pointerAngle); 
-
-		targetViewportPosition.x = Mathf.Clamp (targetViewportPosition.x, 0, 1);
-		targetViewportPosition.y = Mathf.Clamp (targetViewportPosition.y, 0, 1);
-		transform.position = Camera.main.ViewportToWorldPoint (targetViewportPosition);
+			
+		if (!inViewport) {
+			targetViewportPosition.x = Mathf.Clamp (targetViewportPosition.x, 0, 1);
+			targetViewportPosition.y = Mathf.Clamp (targetViewportPosition.y, 0, 1);
+			transform.position = Camera.main.ViewportToWorldPoint (targetViewportPosition);
+		} else
+			transform.position = target.position;
 	}
 }

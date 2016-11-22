@@ -55,16 +55,32 @@ public class HostFigure : MonoBehaviour {
         if(m_isInfected)
             return;
 
-		healthBar.Init (5);
+		healthBar.Init (3);
 
+		int score = 1;
+		 
+		if (hostType == HostFigureType.Trump) {
+			score = 10;
+			GameManager.Instance.SpawnNewTarget ();
+		}
+
+		GameManager.Instance.score += score;
+
+		GameManager.Instance.ShowFloatingText(transform.position, "+" + score);
+		
         m_isInfected = true;
         m_infectedTime = Time.realtimeSinceStartup;
 		hostType = HostFigureType.Zombie;
 		UpdateAnimationState ("Walk Front");
 		m_spriteRenderer.transform.DOPunchScale (Vector3.one * 0.4f, 0.4f);
+
     }
 
     private void Die() {
+
+		if (GetComponentInChildren<Virus> () != null)
+			GetComponentInChildren<Virus> ().Die ();
+
         Destroy(gameObject);
     }
 
