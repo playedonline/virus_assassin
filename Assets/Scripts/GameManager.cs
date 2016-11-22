@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour {
             bgsr.sortingLayerName = "Background";
             bgsr.sortingOrder = -1;
 
-            for(int i = 0 ; i < Random.Range(0,0) ; i++)
+            for(int i = 0 ; i < Random.Range(1, 2) ; i++)
                 SpawnNewSoldier(new Vector3(Random.Range(x - bgSprite.bounds.extents.x, x + bgSprite.bounds.extents.x), Random.Range(y - bgSprite.bounds.extents.y, y + bgSprite.bounds.extents.y), 0));
 
             x += bgSprite.bounds.size.x;
