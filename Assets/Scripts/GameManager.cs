@@ -3,8 +3,8 @@ using UnityEngine;
 public class GameManager : MonoBehaviour {
     public const float SCREEN_WIDTH = 10.8f;
     public const float SCREEN_HEIGHT = 19.2f;
-    public const float SCREENS_WIDTH = 1;
-    public const float SCREENS_HEIGHT = 1;
+    public const float SCREENS_WIDTH = 3;
+    public const float SCREENS_HEIGHT = 3;
 
     public int regularFiguresAmount = 0;
 
@@ -33,8 +33,8 @@ public class GameManager : MonoBehaviour {
 
 		mainTarget = Instantiate<GameObject>(Resources.Load<GameObject>("Soldier")).GetComponent<HostFigure>();
 		mainTarget.name = "Trump";
-		mainTarget.Init (HostFigureType.Trump, topLeft, bottomRight);
 		mainTarget.transform.localPosition = new Vector3(Random.Range(-5.5f, 5.5f), Random.Range(10f, 20.8f), 0);
+		mainTarget.Init (HostFigureType.Trump, topLeft, bottomRight);
     }
 
     void Awake(){

@@ -4,7 +4,6 @@ using DG.Tweening;
 public class HostFigure : MonoBehaviour {
     private const float PATH_POINT_DIFF = 3;
 
-    public string baseAssetsName;
     public float maxSpeed = 3;
 	public HostFigureType hostType;
 
@@ -40,8 +39,6 @@ public class HostFigure : MonoBehaviour {
     private void MoveToNextPoint(){
         pointIndex += 1;
         Vector3 nextPoint = m_pathPoints[pointIndex];
-
-        Debug.Log("MoveToNextPoint");
         m_spriteRenderer.transform.localScale = new Vector3 (nextPoint.x - transform.localPosition.x < 0 ? 1 : -1, 1, 1);
 
         currentMoveTween = transform.DOLocalMove(nextPoint, 2).SetEase(Ease.Linear).OnComplete(() => {
