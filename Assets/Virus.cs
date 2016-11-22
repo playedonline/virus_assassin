@@ -69,7 +69,7 @@ public class Virus : MonoBehaviour {
 		
 	public void Die()
 	{
-		UnityEngine.SceneManagement.SceneManager.LoadScene ("main");
+        GameManager.Instance.OnVirusDie();
 	}
 
 	void SetIdleOutOfHost()

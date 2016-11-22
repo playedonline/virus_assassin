@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour {
 	public static GameManager Instance;
 	public int score;
 
+
     private Object m_hostFigurePrefab;
     public Vector3 TopLeft {get {
 			return new Vector3(-bgSprite.bounds.size.x * HORIZONTAL_TILES / 2, VERTICAL_TILES * bgSprite.bounds.size.y + 0.5f * SCREEN_HEIGHT);
@@ -28,6 +29,7 @@ public class GameManager : MonoBehaviour {
 	private Canvas canvas;
     public Sprite bgSprite;
     private List<HostFigure> hostFigures = new List<HostFigure>();
+    public GameOver gameOver;
 
     void Awake(){
 		GameManager.Instance = this;
@@ -77,6 +79,10 @@ public class GameManager : MonoBehaviour {
 
     public void OnHostFigureDie(HostFigure hf){
         hostFigures.Remove(hf);
+    }
+
+    public void OnVirusDie(){
+        gameOver.gameObject.SetActive(true);
     }
 
     public void ReSpawnSoldier(){
