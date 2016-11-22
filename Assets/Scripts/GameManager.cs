@@ -1,24 +1,24 @@
+using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;
 
 public class GameManager : MonoBehaviour {
 	public static float SCREEN_WIDTH ;
 	public static float SCREEN_HEIGHT ;
 	public static float HORIZONTAL_TILES = 6;
 	public static float VERTICAL_TILES = 4;
-    public int regularFiguresAmount = 0;
 
 	public static GameManager Instance;
 	public int score;
 
     private Object m_hostFigurePrefab;
     public Vector3 TopLeft {get {
-        return new Vector3(-bgSprite.bounds.size.x * HORIZONTAL_TILES / 2, VERTICAL_TILES * bgSprite.bounds.size.y - 0.5f * SCREEN_HEIGHT);
+			return new Vector3(-bgSprite.bounds.size.x * HORIZONTAL_TILES / 2, VERTICAL_TILES * bgSprite.bounds.size.y + 0.5f * SCREEN_HEIGHT);
     }}
 
     public Vector3 BottomRight {get {
-		return new Vector3(bgSprite.bounds.size.x * HORIZONTAL_TILES / 2, -0.5f * SCREEN_HEIGHT);
+			return new Vector3(bgSprite.bounds.size.x * HORIZONTAL_TILES / 2, -SCREEN_HEIGHT / 2);
     }}
 
     public HostFigure mainTarget;
@@ -27,18 +27,18 @@ public class GameManager : MonoBehaviour {
 	public Text scoreText;
 	private Canvas canvas;
     public Sprite bgSprite;
+    private List<HostFigure> hostFigures = new List<HostFigure>();
 
     void Awake(){
 		GameManager.Instance = this;
 
-		SCREEN_HEIGHT = Camera.main.orthographicSize;    
+		SCREEN_HEIGHT = Camera.main.orthographicSize * 2;    
 		SCREEN_WIDTH = SCREEN_HEIGHT * Screen.width / Screen.height;
 
 		Debug.Log (SCREEN_HEIGHT + "," + SCREEN_WIDTH +TopLeft + BottomRight);
 		canvas = GameObject.Find ("Canvas").GetComponent<Canvas> ();
-        regularFiguresAmount = 30;
-        m_hostFigurePrefab = Resources.Load("Soldier");
-        
+         m_hostFigurePrefab = Resources.Load("Soldier");
+
         Application.targetFrameRate = 60;
         player = GameObject.Find ("Virus").GetComponent<Virus> ();
 
@@ -53,6 +53,9 @@ public class GameManager : MonoBehaviour {
             bgsr.sortingLayerName = "Background";
             bgsr.sortingOrder = -1;
 
+            for(int i = 0 ; i < Random.Range(1,2) ; i++)
+                SpawnNewSoldier(new Vector3(Random.Range(x - bgSprite.bounds.extents.x, x + bgSprite.bounds.extents.x), Random.Range(y - bgSprite.bounds.extents.y, y + bgSprite.bounds.extents.y), 0));
+
             x += bgSprite.bounds.size.x;
             if(x > BottomRight.x){
                 x = TopLeft.x + bgSprite.bounds.extents.x;
@@ -60,20 +63,54 @@ public class GameManager : MonoBehaviour {
             }
         }
 
-        for(int i = 0 ; i < regularFiguresAmount ; i++){
-            GameObject hostFigure = Instantiate(m_hostFigurePrefab) as GameObject;
-			hostFigure.transform.localPosition = new Vector3(Random.Range(TopLeft.x, BottomRight.x), Random.Range(BottomRight.y, TopLeft.y), 0);
-			hostFigure.GetComponent<HostFigure>().Init(HostFigureType.Soldier, TopLeft, BottomRight);
-        }
-
 		SpawnNewTarget ();
-        
+
     }
 
 	void Update()
 	{
 		scoreText.text = score.ToString ();
+
+        if(hostFigures.Count < 10 && Random.value < 0.01)
+            ReSpawnSoldier();
 	}
+
+    public void OnHostFigureDie(HostFigure hf){
+        hostFigures.Remove(hf);
+    }
+
+    public void ReSpawnSoldier(){
+        int retries = 100;
+        for(int i = 0 ; i < retries ; i++){
+            Vector3 pos = new Vector3(Random.Range(TopLeft.x, BottomRight.x), Random.Range(BottomRight.y, TopLeft.y), 0);
+
+            // is in camera
+			Vector3 targetViewportPosition = Camera.main.WorldToViewportPoint (pos);
+			if (targetViewportPosition.x > 0 && targetViewportPosition.x < 1 && targetViewportPosition.y > 0 && targetViewportPosition.y < 1)
+                continue;
+
+            bool isNearToSoldier = false;
+            foreach (HostFigure hf in hostFigures)
+                if(Vector3.Distance(pos, hf.transform.localPosition) < 10) {
+                    isNearToSoldier = true;
+                    break;
+                }
+
+            if(isNearToSoldier)
+                continue;
+
+            SpawnNewSoldier(pos);
+            break;
+        }
+    }
+
+    public void SpawnNewSoldier(Vector3 position){
+        GameObject hostFigureGO = Instantiate(m_hostFigurePrefab) as GameObject;
+        hostFigureGO.transform.localPosition = position;
+        HostFigure hostFigure = hostFigureGO.GetComponent<HostFigure>();
+        hostFigure.Init(HostFigureType.Soldier, TopLeft, BottomRight);
+        hostFigures.Add(hostFigure);
+    }
 
 	public void SpawnNewTarget()
 	{		
@@ -94,7 +131,7 @@ public class GameManager : MonoBehaviour {
 		targetPointer = transform.GetComponentInChildren<OffscreenPointer>();
 		targetPointer.Init (mainTarget.transform, player.transform);
 	}
-		
+
 	public void ShowFloatingText(Vector3 origin, string text)
 	{
 		Text floatingLabel = Instantiate<GameObject> (Resources.Load<GameObject> ("FloatingLabel")).GetComponent<Text>();
@@ -106,6 +143,6 @@ public class GameManager : MonoBehaviour {
 		floatingLabel.DOFade (0, 2);
 		floatingLabel.rectTransform.DOLocalMoveY (200, 1).SetRelative(true);
 		Destroy (floatingLabel.gameObject, 3);
-			
+
 	}
 }

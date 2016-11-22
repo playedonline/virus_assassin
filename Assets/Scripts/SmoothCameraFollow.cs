@@ -21,10 +21,10 @@ public class SmoothCameraFollow : MonoBehaviour {
 		var horzExtent = vertExtent * Screen.width / Screen.height;
 
 		// Calculations assume map is position at the origin
-//		minX = horzExtent - GameManager.Instance.totalScreenWidth / 2.0f;
-//		maxX = GameManager.Instance.totalScreenWidth / 2.0f - horzExtent;
-//		minY = vertExtent - GameManager.Instance.totalScreenHeight / 2.0f;
-//		maxY = GameManager.Instance.totalScreenHeight / 2.0f - vertExtent;
+		minX = GameManager.Instance.TopLeft.x + GameManager.SCREEN_WIDTH/2;
+		maxX = GameManager.Instance.BottomRight.x - GameManager.SCREEN_WIDTH/2;
+		minY = GameManager.Instance.BottomRight.y + GameManager.SCREEN_HEIGHT/2;
+		maxY = GameManager.Instance.TopLeft.y - GameManager.SCREEN_HEIGHT/2;
 	}
 
 	// Update is called once per frame
