@@ -30,15 +30,17 @@ public class SmoothCameraFollow : MonoBehaviour {
 
 			targetPos = transform.position + (targetDirection.normalized * interpVelocity * Time.deltaTime);
 
-            if(targetPos.x < GameManager.Instance.TopLeft.x)
-                targetPos.x = GameManager.Instance.TopLeft.x;
-            else if(targetPos.x > GameManager.Instance.BottomRight.x)
-                targetPos.x = GameManager.Instance.BottomRight.x;
+			float offshoot_x = GameManager.SCREEN_WIDTH * 0.5f;
+			if(targetPos.x < GameManager.Instance.TopLeft.x + offshoot_x)
+				targetPos.x = GameManager.Instance.TopLeft.x + offshoot_x;
+			else if(targetPos.x  > GameManager.Instance.BottomRight.x - offshoot_x)
+				targetPos.x = GameManager.Instance.BottomRight.x - offshoot_x;
 
-            if(targetPos.y < GameManager.Instance.BottomRight.y)
-                targetPos.y = GameManager.Instance.BottomRight.y;
-            else if(targetPos.y > GameManager.Instance.TopLeft.y)
-                targetPos.y = GameManager.Instance.TopLeft.y;
+			float offshoot_y = GameManager.SCREEN_HEIGHT * 0.5f;
+			if(targetPos.y < GameManager.Instance.BottomRight.y  + offshoot_y)
+				targetPos.y = GameManager.Instance.BottomRight.y + offshoot_y;
+			else if(targetPos.y > GameManager.Instance.TopLeft.y - offshoot_y)
+				targetPos.y = GameManager.Instance.TopLeft.y - offshoot_y;
             
 			targetPos.y = Mathf.Clamp (targetPos.y, -1, 9999);
 			transform.position = Vector3.Lerp (transform.position, targetPos + offset, 0.5f);
