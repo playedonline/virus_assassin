@@ -28,6 +28,8 @@ public class GameManager : MonoBehaviour {
 	private Canvas canvas;
     public Sprite bgSprite;
     private List<HostFigure> hostFigures = new List<HostFigure>();
+	private int comboCounter;
+	private float comboStartTime;
 
     void Awake(){
 		GameManager.Instance = this;
@@ -78,6 +80,11 @@ public class GameManager : MonoBehaviour {
     public void OnHostFigureDie(HostFigure hf){
         hostFigures.Remove(hf);
     }
+
+	public void OnHostFigureInfected(HostFigure hf){
+		hostFigures.Remove(hf);
+	}
+
 
     public void ReSpawnSoldier(){
         int retries = 100;
@@ -140,8 +147,9 @@ public class GameManager : MonoBehaviour {
 		floatingLabel.rectTransform.SetParent (canvas.transform, true);
 		floatingLabel.rectTransform.localScale = Vector3.one;
 
-		floatingLabel.DOFade (0, 2);
-		floatingLabel.rectTransform.DOLocalMoveY (200, 1).SetRelative(true);
+		floatingLabel.transform.DOPunchScale (Vector3.one * 0.3f, 1);
+		floatingLabel.DOFade (0f, 1);
+		floatingLabel.rectTransform.DOLocalMoveY (100, 1).SetRelative(true);
 		Destroy (floatingLabel.gameObject, 3);
 
 	}

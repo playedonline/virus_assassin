@@ -37,7 +37,9 @@ public class Flingable : MonoBehaviour {
 
 		if (didInitiatedFling) {			
 			// update aim arrow
-			aimDirection = mousePos - flingStartPosition;
+			//aimDirection = flingStartPosition - mousePos; // sling
+			//aimDirection = mousePos - flingStartPosition; // swipe forward
+			aimDirection = mousePos - transform.position; // tap in direction
 			aimAngle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg;
 			if(aimAngle < 0) aimAngle += 360;
 
