@@ -78,9 +78,15 @@ public class HostFigure : MonoBehaviour {
 		hostType = HostFigureType.Soldier;
 		UpdateAnimationState ("Walk Front");
 
-//		// temp breath animation
-//		m_spriteRenderer.transform.DOScale(Vector3.one * 0.07f, 1).SetEase(Ease.Linear).SetLoops(-1, LoopType.Yoyo).SetRelative(true).SetDelay(Random.value);
+		// temp breathing animation
+		//m_spriteRenderer.transform.DOScale(Vector3.one * 0.07f, 1).SetEase(Ease.Linear).SetLoops(-1, LoopType.Yoyo).SetRelative(true).SetDelay(Random.value);
     }
+
+	public void Init(HostFigureType hostType)
+	{
+		this.hostType = hostType;
+		UpdateAnimationState ("Walk Front");
+	}
 
 	private void UpdateAnimationState(string newState)
 	{

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+using DG.Tweening;
 public class Flingable : MonoBehaviour {
 	bool didInitiatedFling;
 
@@ -23,13 +23,14 @@ public class Flingable : MonoBehaviour {
 			didInitiatedFling = true;
 			flingStartPosition = mousePos;
 			coneSprite.enabled = true;
-		//	GameObject.Find ("marker").transform.position = new Vector3 (mousePos.x, mousePos.y, 0);
+			Camera.main.DOOrthoSize (14, 0.4f);
 		}
 		if (Input.GetMouseButtonUp (0) && didInitiatedFling) {
 			// launch
 			didInitiatedFling = false;
 			coneSprite.enabled = false;
 			GetComponent<Virus> ().Launch (aimDirection.normalized, aimAngle);
+			Camera.main.DOOrthoSize (10, 0.3f);
 
 		}
 
