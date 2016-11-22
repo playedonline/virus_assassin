@@ -21,9 +21,28 @@ public class GameManager : MonoBehaviour {
 	private Transform targetPointer;
 	private Virus player;
 
+    public Sprite bgSprite;
+
     public void Init(){
         Vector3 topLeft = TopLeft;
         Vector3 bottomRight = BottomRight;
+
+        float x = topLeft.x;
+        float y = topLeft.y;
+        GameObject bg = new GameObject("bg");
+        while(y > bottomRight.y){
+            SpriteRenderer bgsr = new GameObject("bg").AddComponent<SpriteRenderer>();
+            bgsr.transform.parent = bg.transform;
+            bgsr.transform.localPosition = new Vector3(x, y);
+            bgsr.sprite = bgSprite;
+            bgsr.sortingOrder = -1;
+
+            x += bgSprite.bounds.size.x - 2;
+            if(x > bottomRight.x){
+                x = topLeft.x;
+                y -= bgSprite.bounds.size.y - 2;
+            }
+        }
 
         for(int i = 0 ; i < regularFiguresAmount ; i++){
             GameObject hostFigure = Instantiate(m_hostFigurePrefab) as GameObject;
@@ -42,6 +61,7 @@ public class GameManager : MonoBehaviour {
 		Application.targetFrameRate = 60;
 		targetPointer = transform.Find ("TargetPointer");
 		player = GameObject.Find ("Virus").GetComponent<Virus> ();
+
         Init();
     }
 
