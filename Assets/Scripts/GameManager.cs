@@ -17,6 +17,9 @@ public class GameManager : MonoBehaviour {
     public Vector3 BottomRight {get {
         return new Vector3(SCREEN_WIDTH * (SCREENS_WIDTH - 0.5f), -SCREEN_HEIGHT * (SCREENS_HEIGHT - 0.5f));
     }}
+	public HostFigure mainTarget;
+	private Transform targetPointer;
+	private Virus player;
 
     public void Init(){
         Vector3 topLeft = TopLeft;
@@ -25,13 +28,30 @@ public class GameManager : MonoBehaviour {
         for(int i = 0 ; i < regularFiguresAmount ; i++){
             GameObject hostFigure = Instantiate(m_hostFigurePrefab) as GameObject;
             hostFigure.transform.localPosition = new Vector3(Random.Range(topLeft.x, bottomRight.x), Random.Range(bottomRight.y, topLeft.y), 0);
-            hostFigure.GetComponent<HostFigure>().Init(topLeft, bottomRight);
+            hostFigure.GetComponent<HostFigure>().Init(HostFigureType.Soldier, topLeft, bottomRight);
         }
+
+		mainTarget = Instantiate<GameObject>(Resources.Load<GameObject>("Soldier")).GetComponent<HostFigure>();
+		mainTarget.name = "Trump";
+		mainTarget.Init (HostFigureType.Trump);
+		mainTarget.transform.localPosition = new Vector3(Random.Range(-5.5f, 5.5f), Random.Range(10f, 20.8f), 0);
     }
 
     void Awake(){
         m_hostFigurePrefab = Resources.Load("SoldierOur");
 		Application.targetFrameRate = 60;
+		targetPointer = transform.Find ("TargetPointer");
+		player = GameObject.Find ("Virus").GetComponent<Virus> ();
         Init();
     }
+
+	void Update()
+	{
+		Vector3 directionToTarget = mainTarget.transform.position - player.transform.position;
+		directionToTarget.Normalize ();
+		//targetPointer.transform.position =
+		float pointerAngle = Mathf.Atan2(directionToTarget.y, directionToTarget.x) * Mathf.Rad2Deg;
+		if(pointerAngle < 0) pointerAngle += 360;
+		targetPointer.transform.localEulerAngles = new Vector3 (0, 0, pointerAngle);
+	}
 }
