@@ -9,6 +9,7 @@ public class Virus : MonoBehaviour {
 	HostFigure currentHost;
 	bool isFlying;
 	Healthbar healthbar;
+	float lastLaunchTime;
 
 	void Start () {
 		body = GetComponent<Rigidbody2D> ();
@@ -18,7 +19,6 @@ public class Virus : MonoBehaviour {
 		healthbar = GetComponentInChildren<Healthbar> ();
 		SetIdleOutOfHost ();
 		healthbar.Init (4);
-
 	}
 
 
@@ -34,6 +34,7 @@ public class Virus : MonoBehaviour {
 		spriteTransform.DOScale (new Vector3 (1.7f, 0.2f, 0), 0.2f).SetEase(Ease.InOutSine).SetLoops (-1, LoopType.Yoyo);
 		LeaveHost ();
 		isFlying = true;
+		lastLaunchTime = Time.time;
 
 	}
 
@@ -82,8 +83,9 @@ public class Virus : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D other)
 	{
-		if (!isFlying)
+		if (currentHost != null || Time.time - lastLaunchTime < 0.1f)
 			return;
+		
 		HostFigure hostHit = other.GetComponentInParent<HostFigure> ();
 		if (hostHit != null) {
 			hostHit.OnHit ();
