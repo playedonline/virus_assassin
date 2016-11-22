@@ -73,10 +73,10 @@ public class GameManager : MonoBehaviour {
         comboText = GameObject.Find ("comboText").GetComponent<Text> ();
         comboCanvasGroup = GameObject.Find ("ComboMeter").GetComponent<CanvasGroup> ();
 
-        if(PlayerPrefs.GetInt("skip_start_animation", 0) == 1)
+        //if(PlayerPrefs.GetInt("skip_start_animation", 0) == 1)
             StartGame();
-        else
-            DisplayStartAnimation();
+        //else
+         //   DisplayStartAnimation();
     }
 
     void DisplayStartAnimation(){
@@ -108,7 +108,7 @@ public class GameManager : MonoBehaviour {
 		if (Time.time - comboStartTime > comboActiveThreshold && comboCounter > 0) {
 			// combo broken
 			if (comboCounter > 1)
-				ShowFloatingText (player.transform.position + Vector3.up * 2, "COMBO BROKEN" , 0.8f, false, true);
+				ShowFloatingText (player.transform.position + Vector3.up * 2, "COMBO BROKEN" , 0.8f, true, true);
 			score += comboCounter;
 			comboCounter = 0;
 		}
@@ -216,16 +216,13 @@ public class GameManager : MonoBehaviour {
 		floatingLabel.transform.SetParent (canvas.transform, true);
 		floatingLabel.transform.localScale = Vector3.one * scaleFactor;
 
-		//floatingLabel.transform.localEulerAngles = new Vector3 (0, 0, 5);
-		floatingLabel.transform.localEulerAngles = new Vector3 (0, 0, 0);
-
 		if (rotate)
-			floatingLabel.transform.DOLocalRotate (new Vector3 (0, 0, 5 * (Random.value < 0.5f ? 1 : -1)), 0.3f).SetEase(Ease.OutBack);
+			floatingLabel.transform.DOLocalRotate (new Vector3 (0, 0, 3 * (Random.value < 0.5f ? 1 : -1)), 0.3f).SetEase(Ease.OutBack);
 		
 		if (punch)
-			floatingLabel.transform.DOPunchScale (Vector3.one * 0.3f, 1);
+			floatingLabel.transform.DOPunchScale (Vector3.one * 0.1f, 0.5f);
 		
-		floatingLabel.DOFade (0f, 1.5f);
+		floatingLabel.DOFade (0f, 1f).SetDelay(0.3f);
 		floatingLabel.transform.DOLocalMoveY (80, 1).SetRelative(true);
 		Destroy (floatingLabel.gameObject, 3);
 
