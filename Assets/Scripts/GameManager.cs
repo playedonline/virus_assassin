@@ -41,10 +41,10 @@ public class GameManager : MonoBehaviour {
             bgsr.sprite = bgSprite;
             bgsr.sortingOrder = -1;
 
-            x += bgSprite.bounds.size.x - 2;
+            x += bgSprite.bounds.size.x;
             if(x > bottomRight.x){
                 x = topLeft.x;
-                y -= bgSprite.bounds.size.y - 2;
+                y -= bgSprite.bounds.size.y;
             }
         }
 
