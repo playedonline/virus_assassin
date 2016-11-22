@@ -48,7 +48,7 @@ public class HostFigure : MonoBehaviour {
 
 	public void Init(HostFigureType hostType)
 	{
-		hostType = hostType;
+		this.hostType = hostType;
 		UpdateAnimationState ("Walk Front");
 	}
 
