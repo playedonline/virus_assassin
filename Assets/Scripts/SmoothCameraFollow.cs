@@ -28,7 +28,18 @@ public class SmoothCameraFollow : MonoBehaviour {
 
 			interpVelocity = targetDirection.magnitude * 30f;
 
-			targetPos = transform.position + (targetDirection.normalized * interpVelocity * Time.deltaTime); 
+			targetPos = transform.position + (targetDirection.normalized * interpVelocity * Time.deltaTime);
+
+            if(targetPos.x < GameManager.Instance.TopLeft.x)
+                targetPos.x = GameManager.Instance.TopLeft.x;
+            else if(targetPos.x > GameManager.Instance.BottomRight.x)
+                targetPos.x = GameManager.Instance.BottomRight.x;
+
+            if(targetPos.y < GameManager.Instance.BottomRight.y)
+                targetPos.y = GameManager.Instance.BottomRight.y;
+            else if(targetPos.y > GameManager.Instance.TopLeft.y)
+                targetPos.y = GameManager.Instance.TopLeft.y;
+            
 			targetPos.y = Mathf.Clamp (targetPos.y, -1, 9999);
 			transform.position = Vector3.Lerp (transform.position, targetPos + offset, 0.5f);
 			//transform.position = new Vector3(target.position.x,target.position.y,-10);

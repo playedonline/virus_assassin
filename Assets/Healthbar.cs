@@ -15,7 +15,7 @@ public class Healthbar : MonoBehaviour {
 	public void Init(float health)
 	{
 		gameObject.SetActive (true);
-		healthLeft = healthTotal = health;
+		healthLeft = healthTotal = health * 10;
 	}
 
 	// Update is called once per frame
