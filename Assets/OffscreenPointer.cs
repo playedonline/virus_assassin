@@ -14,16 +14,17 @@ public class OffscreenPointer : MonoBehaviour {
 	{
 		this.target = target;
 		this.origin = origin;
+
+        if(origin != null && target != null)
+            gameObject.SetActive(true);
 	}
 
 	void Update()
 	{
-        if(origin == null) {
+        if(origin == null || target == null) {
             gameObject.SetActive(false);
 			return;
-		} else {
-            gameObject.SetActive(true);
-        }
+		}
 
 		Vector3 directionToTarget = target.transform.position - origin.transform.position;
 		directionToTarget.Normalize ();

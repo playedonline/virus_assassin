@@ -17,7 +17,7 @@ public class StartAnimation : MonoBehaviour{
     private Vector3 bubbleHiddenPos;
     private string text;
 
-    private float typeDelay = 0.05f;
+    private float typeDelay = 0.02f;
     private float skullDelay = 1f;
 
     public void Animation() {
@@ -34,7 +34,7 @@ public class StartAnimation : MonoBehaviour{
         DOTween.Sequence().Insert(
             1f, Camera.main.DOOrthoSize (4, 0.6f).SetUpdate(UpdateType.Normal, true).SetEase(Ease.OutBack)
         ).Insert(
-            1.9f, blackBG.transform.DOLocalMove(blackBGPos, 0.6f).SetUpdate(UpdateType.Normal, true)
+            1.8f, blackBG.transform.DOLocalMove(blackBGPos, 0.4f).SetUpdate(UpdateType.Normal, true)
         ).Insert(
             1.9f, kjBig.transform.DOLocalMove(kjBigPos, 0.6f).SetUpdate(UpdateType.Normal, true)
         ).Insert(
@@ -44,12 +44,12 @@ public class StartAnimation : MonoBehaviour{
         ).InsertCallback(2.7f,
             TypeAnimation
         ).InsertCallback(4f + TypeAnimationDuration(), () => {
-            Camera.main.DOOrthoSize (10, 1f).SetUpdate(UpdateType.Normal, true);
+            Camera.main.DOOrthoSize (10, 0.6f).SetUpdate(UpdateType.Normal, true);
             blackBG.transform.DOLocalMove(blackBGHiddenPos, 0.5f).SetUpdate(UpdateType.Normal, true);
             kjBig.transform.DOLocalMove(kjBigHiddenPos, 0.5f).SetUpdate(UpdateType.Normal, true);
             bubble.transform.DOLocalMove(bubbleHiddenPos, 0.5f).SetUpdate(UpdateType.Normal, true);
             bubble.transform.DOScale(Vector3.zero, 0.4f).SetUpdate(UpdateType.Normal, true);
-        }).InsertCallback(4.5f + TypeAnimationDuration(), () => {
+        }).InsertCallback(4.6f + TypeAnimationDuration(), () => {
             Destroy(kjFigureGO);
             Destroy(this.gameObject);
             GameManager.Instance.StartGame();
