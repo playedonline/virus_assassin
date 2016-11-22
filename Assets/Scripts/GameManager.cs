@@ -15,15 +15,8 @@ public class GameManager : MonoBehaviour {
 	public int score;
 
     private Object m_hostFigurePrefab;
-    public Vector3 TopLeft {get {
-			return new Vector3(-bgSprite.bounds.size.x * HORIZONTAL_TILES / 2, VERTICAL_TILES * bgSprite.bounds.size.y + 0.5f * SCREEN_HEIGHT);
-    }}
-
-    public Vector3 BottomRight {get {
-			return new Vector3(bgSprite.bounds.size.x * HORIZONTAL_TILES / 2, -SCREEN_HEIGHT / 2);
-    }}
-
-    public HostFigure mainTarget;
+	public Bounds spawnableArea;
+	public HostFigure mainTarget;
     private OffscreenPointer targetPointer;
     private Virus player;
 	public Text scoreText;
@@ -44,28 +37,28 @@ public class GameManager : MonoBehaviour {
 		SCREEN_WIDTH = SCREEN_HEIGHT * Screen.width / Screen.height;
 
 		canvas = GameObject.Find ("Canvas").GetComponent<Canvas> ();
-         m_hostFigurePrefab = Resources.Load("Soldier");
+        m_hostFigurePrefab = Resources.Load("Soldier");
 
         Application.targetFrameRate = 60;
 
-        float x = TopLeft.x + bgSprite.bounds.extents.x;
-        float y = TopLeft.y - bgSprite.bounds.extents.y;
+		spawnableArea.min = new Vector3 (-38, -6, 0);
+		spawnableArea.max = new Vector3 (38, 44, 0);
+		Bounds spawnTileBounds = new Bounds (Vector3.zero, new Vector3 (10.8f, 10.8f, 0));
+		float x = spawnableArea.min.x; 
+		float y = spawnableArea.min.y; 
         GameObject bg = new GameObject("bg");
-        while(y > BottomRight.y){
-            SpriteRenderer bgsr = new GameObject("bg").AddComponent<SpriteRenderer>();
-            bgsr.transform.parent = bg.transform;
-            bgsr.transform.localPosition = new Vector3(x, y);
-            bgsr.sprite = bgSprite;
-            bgsr.sortingLayerName = "Background";
-            bgsr.sortingOrder = -1;
-
+		Debug.Log (spawnableArea.min +","+ spawnableArea.max +","+ spawnTileBounds.min +","+ spawnTileBounds.max);
+		int tries = 0;
+		while(y < spawnableArea.max.y){
+			++tries;
+			Debug.Log ("spawn!");
             for(int i = 0 ; i < Random.Range(1, 2) ; i++)
-                SpawnNewSoldier(new Vector3(Random.Range(x - bgSprite.bounds.extents.x, x + bgSprite.bounds.extents.x), Random.Range(y - bgSprite.bounds.extents.y, y + bgSprite.bounds.extents.y), 0));
+				SpawnNewSoldier(new Vector3(Random.Range(x, x + spawnTileBounds.size.x), Random.Range(y, y + spawnTileBounds.size.y), 0));
 
-            x += bgSprite.bounds.size.x;
-            if(x > BottomRight.x){
-                x = TopLeft.x + bgSprite.bounds.extents.x;
-                y -= bgSprite.bounds.size.y;
+			x += spawnTileBounds.size.x;
+			if(x > spawnableArea.max.x){
+				x = spawnableArea.min.x;
+				y += spawnTileBounds.size.y;
             }
         }
 
@@ -160,7 +153,7 @@ public class GameManager : MonoBehaviour {
     public void ReSpawnSoldier(){
         int retries = 100;
         for(int i = 0 ; i < retries ; i++){
-            Vector3 pos = new Vector3(Random.Range(TopLeft.x, BottomRight.x), Random.Range(BottomRight.y, TopLeft.y), 0);
+			Vector3 pos = new Vector3(Random.Range(-spawnableArea.extents.x, spawnableArea.extents.x), Random.Range(-spawnableArea.extents.y, spawnableArea.extents.y), 0);
 
             // is in camera
 			Vector3 targetViewportPosition = Camera.main.WorldToViewportPoint (pos);
@@ -183,10 +176,11 @@ public class GameManager : MonoBehaviour {
     }
 
     public void SpawnNewSoldier(Vector3 position){
+		Debug.Log (position);
         GameObject hostFigureGO = Instantiate(m_hostFigurePrefab) as GameObject;
         hostFigureGO.transform.localPosition = position;
         HostFigure hostFigure = hostFigureGO.GetComponent<HostFigure>();
-        hostFigure.Init(HostFigureType.Soldier, TopLeft, BottomRight);
+        hostFigure.Init(HostFigureType.Soldier);
         hostFigures.Add(hostFigure);
     }
 
@@ -194,17 +188,17 @@ public class GameManager : MonoBehaviour {
 	{		
 		mainTarget = Instantiate<GameObject>(Resources.Load<GameObject>("Soldier")).GetComponent<HostFigure>();
 		mainTarget.name = "Trump";
-		Vector3 randomPos = new Vector3 (Random.Range (TopLeft.x, BottomRight.x), Random.Range (BottomRight.y, TopLeft.y), 0);
+		Vector3 randomPos = new Vector3 (Random.Range (spawnableArea.min.x, spawnableArea.max.x), Random.Range (spawnableArea.min.y, spawnableArea.min.y), 0);
 		int tries = 0;
 		while ((randomPos - player.transform.position).sqrMagnitude < 1300 && tries < 100) {
 			++tries;
-			randomPos = new Vector3 (Random.Range (TopLeft.x, BottomRight.x), Random.Range (BottomRight.y, TopLeft.y), 0);
+			randomPos = new Vector3 (Random.Range (spawnableArea.min.x, spawnableArea.max.x), Random.Range (spawnableArea.min.y, spawnableArea.min.y), 0);
 		}
 		if (tries == 100)
 			Debug.LogError ("Oh hell");
 		
 		mainTarget.transform.localPosition = randomPos;
-		mainTarget.Init (HostFigureType.Trump, TopLeft, BottomRight);
+		mainTarget.Init (HostFigureType.Trump);
 
 		targetPointer = transform.GetComponentInChildren<OffscreenPointer>(true);
 		targetPointer.Init (mainTarget.transform, player.transform);

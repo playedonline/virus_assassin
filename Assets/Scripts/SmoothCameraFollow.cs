@@ -21,10 +21,10 @@ public class SmoothCameraFollow : MonoBehaviour {
 		var horzExtent = vertExtent * Screen.width / Screen.height;
 
 		// Calculations assume map is position at the origin
-		minX = GameManager.Instance.TopLeft.x + GameManager.SCREEN_WIDTH/2;
-		maxX = GameManager.Instance.BottomRight.x - GameManager.SCREEN_WIDTH/2;
-		minY = GameManager.Instance.BottomRight.y + GameManager.SCREEN_HEIGHT/2;
-		maxY = GameManager.Instance.TopLeft.y - GameManager.SCREEN_HEIGHT/2;
+		minX = -30;//GameManager.Instance.spawnableArea.min.x + GameManager.SCREEN_WIDTH/4;
+		maxX = 32;//GameManager.Instance.spawnableArea.max.x - GameManager.SCREEN_WIDTH/4;
+		minY = -2.35f;//GameManager.Instance.spawnableArea.min.y + GameManager.SCREEN_HEIGHT/4;
+		maxY = 40;//GameManager.Instance.spawnableArea.max.y - GameManager.SCREEN_HEIGHT/4;
 	}
 
 	// Update is called once per frame
@@ -41,8 +41,8 @@ public class SmoothCameraFollow : MonoBehaviour {
 			targetPos = transform.position + (targetDirection.normalized * interpVelocity * Time.deltaTime);
 
 			float offshoot_x = GameManager.SCREEN_WIDTH * 0.25f;
-			//targetPos.x = Mathf.Clamp (targetPos.x, GameManager.Instance.TopLeft.x + 15, GameManager.Instance.BottomRight.x - 15);
-			//targetPos.y = Mathf.Clamp (targetPos.y, GameManager.Instance.BottomRight.y + 5, GameManager.Instance.TopLeft.y - 5);
+		//	targetPos.x = Mathf.Clamp (targetPos.x, GameManager.Instance.spawnableArea.min.x, GameManager.Instance.spawnableArea.max.x);
+		//	targetPos.y = Mathf.Clamp (targetPos.y, GameManager.Instance.spawnableArea.min.y, GameManager.Instance.spawnableArea.max.y);
 			targetPos.x = Mathf.Clamp(targetPos.x, minX, maxX);
 			targetPos.y = Mathf.Clamp(targetPos.y, minY, maxY);
 

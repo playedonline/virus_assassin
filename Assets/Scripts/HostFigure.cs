@@ -17,7 +17,7 @@ public class HostFigure : MonoBehaviour {
     private Healthbar healthBar;
 
 
-    public void Init(HostFigureType hostType, Vector3 topLeft, Vector3 bottomRight){
+	public void Init(HostFigureType hostType){
         this.hostType = hostType;
         UpdateAnimationState ("Walk Front");
 
@@ -27,8 +27,8 @@ public class HostFigure : MonoBehaviour {
         for(int i = 0 ; i < Random.Range(4,10) ; i++){
             lastPos = m_pathPoints[m_pathPoints.Count - 1];
             m_pathPoints.Add(new Vector2(
-                    Random.Range(Mathf.Max(topLeft.x, lastPos.x - PATH_POINT_DIFF), Mathf.Min(bottomRight.x, lastPos.x + PATH_POINT_DIFF)),
-                    Random.Range(Mathf.Max(bottomRight.y, lastPos.y - PATH_POINT_DIFF), Mathf.Min(topLeft.y, lastPos.y + PATH_POINT_DIFF))
+				Random.Range(Mathf.Max(GameManager.Instance.spawnableArea.min.x, lastPos.x - PATH_POINT_DIFF), Mathf.Min(GameManager.Instance.spawnableArea.max.x, lastPos.x + PATH_POINT_DIFF)),
+				Random.Range(Mathf.Max(GameManager.Instance.spawnableArea.min.y, lastPos.y - PATH_POINT_DIFF), Mathf.Min(GameManager.Instance.spawnableArea.max.y, lastPos.y + PATH_POINT_DIFF))
             ));
         }
 
@@ -89,12 +89,6 @@ public class HostFigure : MonoBehaviour {
 		// temp breathing animation
 		//m_spriteRenderer.transform.DOScale(Vector3.one * 0.07f, 1).SetEase(Ease.Linear).SetLoops(-1, LoopType.Yoyo).SetRelative(true).SetDelay(Random.value);
     }
-
-	public void Init(HostFigureType hostType)
-	{
-		this.hostType = hostType;
-		UpdateAnimationState ("Walk Front");
-	}
 
 	private void UpdateAnimationState(string newState)
 	{
