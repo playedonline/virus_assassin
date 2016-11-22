@@ -4,8 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
-	public static float SCREEN_WIDTH ;
-	public static float SCREEN_HEIGHT ;
+	public static float SCREEN_WIDTH;
+	public static float SCREEN_HEIGHT;
 	public static float HORIZONTAL_TILES = 8;
 	public static float VERTICAL_TILES = 4;
 	public const float comboActiveThreshold = 1.2f;
@@ -46,7 +46,6 @@ public class GameManager : MonoBehaviour {
          m_hostFigurePrefab = Resources.Load("Soldier");
 
         Application.targetFrameRate = 60;
-        player = GameObject.Find ("Virus").GetComponent<Virus> ();
 
         float x = TopLeft.x + bgSprite.bounds.extents.x;
         float y = TopLeft.y - bgSprite.bounds.extents.y;
@@ -69,10 +68,31 @@ public class GameManager : MonoBehaviour {
             }
         }
 
-		comboText = GameObject.Find ("comboText").GetComponent<Text> ();
-		comboCanvasGroup = GameObject.Find ("ComboMeter").GetComponent<CanvasGroup> ();
-		SpawnNewTarget ();
+        Time.timeScale = 0;
 
+        comboText = GameObject.Find ("comboText").GetComponent<Text> ();
+        comboCanvasGroup = GameObject.Find ("ComboMeter").GetComponent<CanvasGroup> ();
+
+        if(PlayerPrefs.GetInt("skip_start_animation", 0) == 1)
+            StartGame();
+        else
+            DisplayStartAnimation();
+    }
+
+    void DisplayStartAnimation(){
+        GameObject animationGO = Instantiate(Resources.Load("KJStartAnimation")) as GameObject;
+        animationGO.transform.parent = canvas.transform;
+        animationGO.transform.localPosition = Vector3.zero;
+        animationGO.transform.localScale = Vector3.one;
+        animationGO.GetComponent<StartAnimation>().Animation();
+    }
+
+    public void StartGame(){
+        PlayerPrefs.SetInt("skip_start_animation", 0);
+        Time.timeScale = 1;
+        player = (Instantiate(Resources.Load("Virus")) as GameObject).GetComponent<Virus> ();
+		Camera.main.GetComponent<SmoothCameraFollow> ().target = player.transform;
+        SpawnNewTarget ();
     }
 
 	void Update()
@@ -98,34 +118,36 @@ public class GameManager : MonoBehaviour {
         hostFigures.Remove(hf);
     }
 
-	public void OnHostFigureInfected(HostFigure hf){
-		if (hf.hostType == HostFigureType.Trump) {
-			score += 10;
-			SpawnNewTarget ();
-		}
-			
-		UpdateComboCounter (hf.transform.position + Vector3.up * 3f);
-		if (comboCounter % 5 == 0 && comboCounter > 0)
-			ShowFloatingText (player.transform.position + Vector3.up * 3, "AWESOME! +" + 5, 0.8f, false, true);
-	}
+    public void OnHostFigureInfected(HostFigure hf){
+        if (hf.hostType == HostFigureType.Trump) {
+            score += 10;
+            SpawnNewTarget ();
+        }
 
-	private void UpdateComboCounter(Vector3 newPosition)
-	{
-		comboStartTime = Time.time;		
-		comboCounter += 1;
-		comboText.text = comboCounter.ToString ();
-		comboCanvasGroup.alpha = 1;
-		DOTween.Kill (comboCanvasGroup);
-		comboCanvasGroup.DOFade (0, 0.4f).SetDelay(0.8f);
+        UpdateComboCounter (hf.transform.position + Vector3.up * 3f);
+        if (comboCounter % 5 == 0 && comboCounter > 0)
+            ShowFloatingText (player.transform.position + Vector3.up * 3, "AWESOME! +" + 5, 0.8f, false, true);
+    }
 
-		comboCanvasGroup.transform.DOPunchScale (Vector3.one * 0.3f, 0.5f);
-		if (comboCounter == 1)
-			comboCanvasGroup.transform.position = newPosition;
-		else
-			comboCanvasGroup.transform.DOMove (newPosition, 0.2f).SetEase (Ease.OutSine);
-		//ShowFloatingText(hf.transform.position, comboCounter.ToString(), 1, true);		
-			
-	}
+    private void UpdateComboCounter(Vector3 newPosition)
+    {
+        comboStartTime = Time.time;
+        comboCounter += 1;
+        comboText.text = comboCounter.ToString ();
+        comboCanvasGroup.alpha = 1;
+        DOTween.Kill (comboCanvasGroup);
+        comboCanvasGroup.DOFade (0, 0.4f).SetDelay(0.8f);
+
+        comboCanvasGroup.transform.DOPunchScale (Vector3.one * 0.3f, 0.5f);
+        if (comboCounter == 1)
+            comboCanvasGroup.transform.position = newPosition;
+        else
+            comboCanvasGroup.transform.DOMove (newPosition, 0.2f).SetEase (Ease.OutSine);
+        //ShowFloatingText(hf.transform.position, comboCounter.ToString(), 1, true);
+
+    }
+
+
 
     public void OnVirusDie(){
         targetPointer.Init (null, null);
@@ -182,7 +204,7 @@ public class GameManager : MonoBehaviour {
 		mainTarget.transform.localPosition = randomPos;
 		mainTarget.Init (HostFigureType.Trump, TopLeft, BottomRight);
 
-		targetPointer = transform.GetComponentInChildren<OffscreenPointer>();
+		targetPointer = transform.GetComponentInChildren<OffscreenPointer>(true);
 		targetPointer.Init (mainTarget.transform, player.transform);
 	}
 

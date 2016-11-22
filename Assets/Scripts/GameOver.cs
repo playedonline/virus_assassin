@@ -15,8 +15,10 @@ public class GameOver : MonoBehaviour {
         scoreText.text = string.Format("SCORE: {0}", GameManager.Instance.score);
 
         button.onClick.AddListener(() => {
-            if(allowRestart)
-                UnityEngine.SceneManagement.SceneManager.LoadScene ("main");
+            if(allowRestart) {
+                PlayerPrefs.SetInt("skip_start_animation", 1);
+                UnityEngine.SceneManagement.SceneManager.LoadScene("main");
+            }
         });
 
 		DOVirtual.DelayedCall(0.5f, () => {
@@ -24,7 +26,7 @@ public class GameOver : MonoBehaviour {
             DOTween.Sequence().Append(
                     tapToStart.DOFade(1, 0.2f)
             ).Append(
-                    tapToStart.DOFade(1, 2)
+                    tapToStart.DOFade(1, 0.2f)
             ).Append(
                     tapToStart.DOFade(0, 0.2f)
             ).SetLoops(-1, LoopType.Restart);
