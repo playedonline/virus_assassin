@@ -4,8 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
-	public static float SCREEN_WIDTH ;
-	public static float SCREEN_HEIGHT ;
+	public static float SCREEN_WIDTH;
+	public static float SCREEN_HEIGHT;
 	public static float HORIZONTAL_TILES = 8;
 	public static float VERTICAL_TILES = 4;
 
@@ -43,7 +43,6 @@ public class GameManager : MonoBehaviour {
          m_hostFigurePrefab = Resources.Load("Soldier");
 
         Application.targetFrameRate = 60;
-        player = GameObject.Find ("Virus").GetComponent<Virus> ();
 
         float x = TopLeft.x + bgSprite.bounds.extents.x;
         float y = TopLeft.y - bgSprite.bounds.extents.y;
@@ -66,8 +65,27 @@ public class GameManager : MonoBehaviour {
             }
         }
 
-		SpawnNewTarget ();
+        Time.timeScale = 0;
 
+        if(PlayerPrefs.GetInt("skip_start_animation", 0) == 1)
+            StartGame();
+        else
+            DisplayStartAnimation();
+    }
+
+    void DisplayStartAnimation(){
+        GameObject animationGO = Instantiate(Resources.Load("KJStartAnimation")) as GameObject;
+        animationGO.transform.parent = canvas.transform;
+        animationGO.transform.localPosition = Vector3.zero;
+        animationGO.transform.localScale = Vector3.one;
+        animationGO.GetComponent<StartAnimation>().Animation();
+    }
+
+    public void StartGame(){
+        PlayerPrefs.SetInt("skip_start_animation", 0);
+        Time.timeScale = 1;
+        player = (Instantiate(Resources.Load("Virus")) as GameObject).GetComponent<Virus> ();
+        SpawnNewTarget ();
     }
 
 	void Update()
@@ -159,7 +177,7 @@ public class GameManager : MonoBehaviour {
 		mainTarget.transform.localPosition = randomPos;
 		mainTarget.Init (HostFigureType.Trump, TopLeft, BottomRight);
 
-		targetPointer = transform.GetComponentInChildren<OffscreenPointer>();
+		targetPointer = transform.GetComponentInChildren<OffscreenPointer>(true);
 		targetPointer.Init (mainTarget.transform, player.transform);
 	}
 
