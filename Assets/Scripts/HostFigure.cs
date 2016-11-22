@@ -80,6 +80,7 @@ public class HostFigure : MonoBehaviour {
 		if (GetComponentInChildren<Virus> () != null)
 			GetComponentInChildren<Virus> ().Die ();
 
+        GameManager.Instance.OnHostFigureDie(this);
         Destroy(gameObject);
     }
 

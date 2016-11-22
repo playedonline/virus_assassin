@@ -1,13 +1,13 @@
+using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;
 
 public class GameManager : MonoBehaviour {
     public const float SCREEN_WIDTH = 10.8f;
     public const float SCREEN_HEIGHT = 19.2f;
     public const float HORIZONTAL_TILES = 2;
     public const float VERTICAL_TILES = 4;
-    public int regularFiguresAmount = 0;
 
 	public static GameManager Instance;
 	public int score;
@@ -27,14 +27,14 @@ public class GameManager : MonoBehaviour {
 	public Text scoreText;
 	private Canvas canvas;
     public Sprite bgSprite;
+    private List<HostFigure> hostFigures = new List<HostFigure>();
 
     void Awake(){
 		GameManager.Instance = this;
 
 		canvas = GameObject.Find ("Canvas").GetComponent<Canvas> ();
-        regularFiguresAmount = 45;
         m_hostFigurePrefab = Resources.Load("Soldier");
-        
+
         Application.targetFrameRate = 60;
         player = GameObject.Find ("Virus").GetComponent<Virus> ();
 
@@ -49,6 +49,9 @@ public class GameManager : MonoBehaviour {
             bgsr.sortingLayerName = "Background";
             bgsr.sortingOrder = -1;
 
+            for(int i = 0 ; i < Random.Range(1,3) ; i++)
+                SpawnNewSoldier(new Vector3(Random.Range(x - bgSprite.bounds.extents.x, x + bgSprite.bounds.extents.x), Random.Range(y - bgSprite.bounds.extents.y, y + bgSprite.bounds.extents.y), 0));
+
             x += bgSprite.bounds.size.x;
             if(x > BottomRight.x){
                 x = TopLeft.x + bgSprite.bounds.extents.x;
@@ -56,20 +59,53 @@ public class GameManager : MonoBehaviour {
             }
         }
 
-        for(int i = 0 ; i < regularFiguresAmount ; i++){
-            GameObject hostFigure = Instantiate(m_hostFigurePrefab) as GameObject;
-			hostFigure.transform.localPosition = new Vector3(Random.Range(TopLeft.x, BottomRight.x), Random.Range(BottomRight.y, TopLeft.y), 0);
-			hostFigure.GetComponent<HostFigure>().Init(HostFigureType.Soldier, TopLeft, BottomRight);
-        }
-
 		SpawnNewTarget ();
-        
+
     }
 
 	void Update()
 	{
 		scoreText.text = score.ToString ();
+
+        if(hostFigures.Count < 10 && Random.value < 0.01)
+            ReSpawnSoldier();
 	}
+
+    public void OnHostFigureDie(HostFigure hf){
+        hostFigures.Remove(hf);
+    }
+
+    public void ReSpawnSoldier(){
+        int retries = 100;
+        for(int i = 0 ; i < retries ; i++){
+            Vector3 pos = new Vector3(Random.Range(TopLeft.x, BottomRight.x), Random.Range(BottomRight.y, TopLeft.y), 0);
+
+            // is in camera
+            if(pos.x > Camera.main.transform.position.x - SCREEN_WIDTH * 0.5f && pos.x < Camera.main.transform.position.x + SCREEN_WIDTH * 0.5f && pos.y > Camera.main.transform.position.y - SCREEN_HEIGHT * 0.5f && pos.y < Camera.main.transform.position.y + SCREEN_HEIGHT * 0.5f)
+                continue;
+
+            bool isNearToSoldier = false;
+            foreach (HostFigure hf in hostFigures)
+                if(Vector3.Distance(pos, hf.transform.localPosition) < 10) {
+                    isNearToSoldier = true;
+                    break;
+                }
+
+            if(isNearToSoldier)
+                continue;
+
+            SpawnNewSoldier(pos);
+            break;
+        }
+    }
+
+    public void SpawnNewSoldier(Vector3 position){
+        GameObject hostFigureGO = Instantiate(m_hostFigurePrefab) as GameObject;
+        hostFigureGO.transform.localPosition = position;
+        HostFigure hostFigure = hostFigureGO.GetComponent<HostFigure>();
+        hostFigure.Init(HostFigureType.Soldier, TopLeft, BottomRight);
+        hostFigures.Add(hostFigure);
+    }
 
 	public void SpawnNewTarget()
 	{
@@ -82,7 +118,7 @@ public class GameManager : MonoBehaviour {
 		targetPointer = transform.GetComponentInChildren<OffscreenPointer>();
 		targetPointer.Init (mainTarget.transform, player.transform);
 	}
-		
+
 	public void ShowFloatingText(Vector3 origin, string text)
 	{
 		Text floatingLabel = Instantiate<GameObject> (Resources.Load<GameObject> ("FloatingLabel")).GetComponent<Text>();
@@ -94,6 +130,6 @@ public class GameManager : MonoBehaviour {
 		floatingLabel.DOFade (0, 2);
 		floatingLabel.rectTransform.DOLocalMoveY (200, 1).SetRelative(true);
 		Destroy (floatingLabel.gameObject, 3);
-			
+
 	}
 }
