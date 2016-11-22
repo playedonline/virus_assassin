@@ -12,7 +12,6 @@ public class GameManager : MonoBehaviour {
 	public static GameManager Instance;
 	public int score;
 
-
     private Object m_hostFigurePrefab;
     public Vector3 TopLeft {get {
 			return new Vector3(-bgSprite.bounds.size.x * HORIZONTAL_TILES / 2, VERTICAL_TILES * bgSprite.bounds.size.y + 0.5f * SCREEN_HEIGHT);
@@ -29,6 +28,8 @@ public class GameManager : MonoBehaviour {
 	private Canvas canvas;
     public Sprite bgSprite;
     private List<HostFigure> hostFigures = new List<HostFigure>();
+	private int comboCounter;
+	private float comboStartTime;
     public GameOver gameOver;
 
     void Awake(){
@@ -80,6 +81,11 @@ public class GameManager : MonoBehaviour {
     public void OnHostFigureDie(HostFigure hf){
         hostFigures.Remove(hf);
     }
+
+	public void OnHostFigureInfected(HostFigure hf){
+		hostFigures.Remove(hf);
+	}
+
 
     public void OnVirusDie(){
         gameOver.gameObject.SetActive(true);
@@ -146,8 +152,9 @@ public class GameManager : MonoBehaviour {
 		floatingLabel.rectTransform.SetParent (canvas.transform, true);
 		floatingLabel.rectTransform.localScale = Vector3.one;
 
-		floatingLabel.DOFade (0, 2);
-		floatingLabel.rectTransform.DOLocalMoveY (200, 1).SetRelative(true);
+		floatingLabel.transform.DOPunchScale (Vector3.one * 0.3f, 1);
+		floatingLabel.DOFade (0f, 1);
+		floatingLabel.rectTransform.DOLocalMoveY (100, 1).SetRelative(true);
 		Destroy (floatingLabel.gameObject, 3);
 
 	}
