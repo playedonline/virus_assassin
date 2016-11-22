@@ -1,6 +1,5 @@
 ﻿using DG.Tweening;
 using UnityEngine;
-using System.Collections;
 
 public class OffscreenPointer : MonoBehaviour {
 	public Transform target;    
@@ -19,6 +18,9 @@ public class OffscreenPointer : MonoBehaviour {
 
 	void Update()
 	{
+        if(origin == null)
+        	return;
+
 		Vector3 directionToTarget = target.transform.position - origin.transform.position;
 		directionToTarget.Normalize ();
 

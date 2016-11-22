@@ -64,7 +64,7 @@ public class HostFigure : MonoBehaviour {
 			GameManager.Instance.SpawnNewTarget ();
 		}
 
-		GameManager.Instance.OnHostFigureInfected ();
+		GameManager.Instance.OnHostFigureInfected (this);
 		GameManager.Instance.score += score;
 
 		GameManager.Instance.ShowFloatingText(transform.position, "+" + score);

@@ -88,6 +88,7 @@ public class GameManager : MonoBehaviour {
 
 
     public void OnVirusDie(){
+        targetPointer.Init (null, null);
         gameOver.gameObject.SetActive(true);
     }
 

@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using DG.Tweening;
 
 public class Virus : MonoBehaviour {
@@ -69,6 +68,7 @@ public class Virus : MonoBehaviour {
 		
 	public void Die()
 	{
+        Destroy(gameObject);
         GameManager.Instance.OnVirusDie();
 	}
 
