@@ -19,7 +19,7 @@ public class GameOver : MonoBehaviour {
                 UnityEngine.SceneManagement.SceneManager.LoadScene ("main");
         });
 
-        transform.DOLocalMoveX(transform.localPosition.x, 1).OnComplete(() => {
+		DOVirtual.DelayedCall(0.5f, () => {
             allowRestart = true;
             DOTween.Sequence().Append(
                     tapToStart.DOFade(1, 0.2f)

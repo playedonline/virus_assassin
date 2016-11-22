@@ -32,13 +32,13 @@ public class GameManager : MonoBehaviour {
 	private int comboCounter;
 	private float comboStartTime;
     public GameOver gameOverScreen;
-
+	public bool isGameOver;
 	public Text comboText;
 	public CanvasGroup comboCanvasGroup;
 
     void Awake(){
 		GameManager.Instance = this;
-
+		isGameOver = false;
 		SCREEN_HEIGHT = Camera.main.orthographicSize * 2;    
 		SCREEN_WIDTH = SCREEN_HEIGHT * Screen.width / Screen.height;
 
@@ -77,6 +77,9 @@ public class GameManager : MonoBehaviour {
 
 	void Update()
 	{
+		if (isGameOver)
+			return;
+		
 		scoreText.text = score.ToString ();
 
         if(hostFigures.Count < 14 && Random.value < 0.01)
@@ -85,7 +88,7 @@ public class GameManager : MonoBehaviour {
 		if (Time.time - comboStartTime > comboActiveThreshold && comboCounter > 0) {
 			// combo broken
 			if (comboCounter > 1)
-				ShowFloatingText (player.transform.position + Vector3.up * 2, comboCounter + " KILL COMBO" , 0.8f, false, true);
+				ShowFloatingText (player.transform.position + Vector3.up * 2, "COMBO BROKEN" , 0.8f, false, true);
 			score += comboCounter;
 			comboCounter = 0;
 		}
@@ -127,6 +130,7 @@ public class GameManager : MonoBehaviour {
     public void OnVirusDie(){
         targetPointer.Init (null, null);
 		gameOverScreen.gameObject.SetActive(true);
+		isGameOver = true;
     }
 
     public void ReSpawnSoldier(){
@@ -190,14 +194,17 @@ public class GameManager : MonoBehaviour {
 		floatingLabel.transform.SetParent (canvas.transform, true);
 		floatingLabel.transform.localScale = Vector3.one * scaleFactor;
 
+		//floatingLabel.transform.localEulerAngles = new Vector3 (0, 0, 5);
+		floatingLabel.transform.localEulerAngles = new Vector3 (0, 0, 0);
+
 		if (rotate)
-			floatingLabel.transform.DORotate (new Vector3 (0, 0, 5 * Random.value < 0.5f ? 1 : -1), 0.3f).SetEase(Ease.OutBack);
+			floatingLabel.transform.DOLocalRotate (new Vector3 (0, 0, 5 * (Random.value < 0.5f ? 1 : -1)), 0.3f).SetEase(Ease.OutBack);
 		
 		if (punch)
 			floatingLabel.transform.DOPunchScale (Vector3.one * 0.3f, 1);
 		
 		floatingLabel.DOFade (0f, 1.5f);
-		floatingLabel.transform.DOLocalMoveY (5, 1).SetRelative(true);
+		floatingLabel.transform.DOLocalMoveY (80, 1).SetRelative(true);
 		Destroy (floatingLabel.gameObject, 3);
 
 	}
