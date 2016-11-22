@@ -16,7 +16,6 @@ public class HostFigure : MonoBehaviour {
     private List<Vector3> m_pathPoints;
     private int pointIndex = 0;
     private Tweener currentMoveTween;
-    public HostFigureType hostType;
     private Healthbar healthBar;
 
 

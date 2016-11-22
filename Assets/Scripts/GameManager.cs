@@ -33,12 +33,12 @@ public class GameManager : MonoBehaviour {
 
 		mainTarget = Instantiate<GameObject>(Resources.Load<GameObject>("Soldier")).GetComponent<HostFigure>();
 		mainTarget.name = "Trump";
-		mainTarget.Init (HostFigureType.Trump);
+		mainTarget.Init (HostFigureType.Trump, topLeft, bottomRight);
 		mainTarget.transform.localPosition = new Vector3(Random.Range(-5.5f, 5.5f), Random.Range(10f, 20.8f), 0);
     }
 
     void Awake(){
-        m_hostFigurePrefab = Resources.Load("SoldierOur");
+        m_hostFigurePrefab = Resources.Load("Soldier");
 		Application.targetFrameRate = 60;
 		targetPointer = transform.Find ("TargetPointer");
 		player = GameObject.Find ("Virus").GetComponent<Virus> ();
