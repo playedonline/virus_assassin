@@ -9,12 +9,13 @@ public class GameManager : MonoBehaviour {
 	public static float HORIZONTAL_TILES = 8;
 	public static float VERTICAL_TILES = 4;
 	public const float comboActiveThreshold = 1.2f;
-    public static bool startAnimationShown = true;
+    public static bool startAnimationShown = false;
 
 	public static GameManager Instance;
 	public int score;
 
     private Object m_hostFigurePrefab;
+    private List<HostFigureType> hostFigureTypesShown = new List<HostFigureType>();
     public Vector3 TopLeft {get {
 			return new Vector3(-bgSprite.bounds.size.x * HORIZONTAL_TILES / 2, VERTICAL_TILES * bgSprite.bounds.size.y + 0.5f * SCREEN_HEIGHT);
     }}
@@ -46,6 +47,8 @@ public class GameManager : MonoBehaviour {
 		canvas = GameObject.Find ("Canvas").GetComponent<Canvas> ();
          m_hostFigurePrefab = Resources.Load("Soldier");
 
+        targetPointer = transform.GetComponentInChildren<OffscreenPointer>(true);
+
         Application.targetFrameRate = 60;
 
         float x = TopLeft.x + bgSprite.bounds.extents.x;
@@ -69,7 +72,7 @@ public class GameManager : MonoBehaviour {
             }
         }
 
-        Time.timeScale = 0;
+        hostFigureTypesShown.Add(HostFigureType.Soldier);
 
         comboText = GameObject.Find ("comboText").GetComponent<Text> ();
         comboCanvasGroup = GameObject.Find ("ComboMeter").GetComponent<CanvasGroup> ();
@@ -83,11 +86,21 @@ public class GameManager : MonoBehaviour {
     }
 
     void DisplayStartAnimation(){
+        Time.timeScale = 0;
         GameObject animationGO = Instantiate(Resources.Load("KJStartAnimation")) as GameObject;
         animationGO.transform.parent = canvas.transform;
         animationGO.transform.localPosition = Vector3.zero;
         animationGO.transform.localScale = Vector3.one;
         animationGO.GetComponent<StartAnimation>().Animation();
+    }
+
+    void DisplayLeaderSequence(){
+        Time.timeScale = 0;
+        GameObject animationGO = Instantiate(Resources.Load("LeaderSequence")) as GameObject;
+        animationGO.transform.parent = canvas.transform;
+        animationGO.transform.localPosition = Vector3.zero;
+        animationGO.transform.localScale = Vector3.one;
+        animationGO.GetComponent<LeaderSequence>().Animation(mainTarget);
     }
 
     public void StartGame(){
@@ -114,6 +127,11 @@ public class GameManager : MonoBehaviour {
 			score += comboCounter;
 			comboCounter = 0;
 		}
+
+        if(player != null && mainTarget != null && hostFigureTypesShown.IndexOf(mainTarget.hostType) == -1 && Vector3.Distance(player.transform.localPosition, mainTarget.transform.localPosition) < 4){
+            hostFigureTypesShown.Add(mainTarget.hostType);
+            DisplayLeaderSequence();
+        }
 	}
 
     public void OnHostFigureDie(HostFigure hf){
@@ -206,7 +224,6 @@ public class GameManager : MonoBehaviour {
 		mainTarget.transform.localPosition = randomPos;
 		mainTarget.Init (HostFigureType.Trump, TopLeft, BottomRight);
 
-		targetPointer = transform.GetComponentInChildren<OffscreenPointer>(true);
 		targetPointer.Init (mainTarget.transform, player.transform);
 	}
 
