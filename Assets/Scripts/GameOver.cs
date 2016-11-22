@@ -17,8 +17,7 @@ public class GameOver : MonoBehaviour {
         button.onClick.AddListener(() => {
             if(allowRestart) {
                 PlayerPrefs.SetInt("skip_start_animation", 1);
-//                UnityEngine.SceneManagement.SceneManager.LoadScene("main");
-                UnityEngine.SceneManagement.SceneManager.LoadScene("Tom");
+                UnityEngine.SceneManagement.SceneManager.LoadScene("main");
             }
         });
 
