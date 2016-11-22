@@ -57,18 +57,9 @@ public class HostFigure : MonoBehaviour {
 
 		healthBar.Init (3);
 
-		int score = 1;
-		 
-		if (hostType == HostFigureType.Trump) {
-			score = 10;
-			GameManager.Instance.SpawnNewTarget ();
-		}
 
-		GameManager.Instance.OnHostFigureInfected ();
-		GameManager.Instance.score += score;
-
-		GameManager.Instance.ShowFloatingText(transform.position, "+" + score);
-		
+		GameManager.Instance.OnHostFigureInfected (this);
+				
         m_isInfected = true;        
 		hostType = HostFigureType.Zombie;
 		UpdateAnimationState ("Walk Front");

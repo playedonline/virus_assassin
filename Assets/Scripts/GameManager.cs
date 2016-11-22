@@ -75,6 +75,13 @@ public class GameManager : MonoBehaviour {
 
         if(hostFigures.Count < 14 && Random.value < 0.01)
             ReSpawnSoldier();
+
+		if (Time.time - comboStartTime > 1.2f && comboCounter > 0) {
+			// combo broken
+			ShowFloatingText (player.transform.position + Vector3.up * 2, "COMBO BROKEN!", 1, false, true);
+			score += comboCounter;
+			comboCounter = 0;
+		}
 	}
 
     public void OnHostFigureDie(HostFigure hf){
@@ -82,7 +89,18 @@ public class GameManager : MonoBehaviour {
     }
 
 	public void OnHostFigureInfected(HostFigure hf){
-		hostFigures.Remove(hf);
+		if (hf.hostType == HostFigureType.Trump) {
+			score += 10;
+			SpawnNewTarget ();
+		}
+			
+		comboStartTime = Time.time;
+
+		comboCounter += 1;
+		ShowFloatingText(hf.transform.position, comboCounter.ToString(), 1, true);
+
+		if (comboCounter % 5 == 0 && comboCounter > 0)
+			ShowFloatingText (player.transform.position + Vector3.up * 3, "AWESOME!", 1, false, true);
 	}
 
 
@@ -139,16 +157,21 @@ public class GameManager : MonoBehaviour {
 		targetPointer.Init (mainTarget.transform, player.transform);
 	}
 
-	public void ShowFloatingText(Vector3 origin, string text)
+	public void ShowFloatingText(Vector3 origin, string text, float scaleFactor = 1, bool punch = false, bool rotate = false)
 	{
 		Text floatingLabel = Instantiate<GameObject> (Resources.Load<GameObject> ("FloatingLabel")).GetComponent<Text>();
 		floatingLabel.text = text;
 		floatingLabel.rectTransform.position = Camera.main.WorldToScreenPoint (origin);
 		floatingLabel.rectTransform.SetParent (canvas.transform, true);
-		floatingLabel.rectTransform.localScale = Vector3.one;
+		floatingLabel.rectTransform.localScale = Vector3.one * scaleFactor;
 
-		floatingLabel.transform.DOPunchScale (Vector3.one * 0.3f, 1);
-		floatingLabel.DOFade (0f, 1);
+		if (rotate)
+			floatingLabel.transform.DORotate (new Vector3 (0, 0, 5), 0.2f).SetEase(Ease.OutBack);
+		
+		if (punch)
+			floatingLabel.transform.DOPunchScale (Vector3.one * 0.3f, 1);
+		
+		floatingLabel.DOFade (0f, 1.5f);
 		floatingLabel.rectTransform.DOLocalMoveY (100, 1).SetRelative(true);
 		Destroy (floatingLabel.gameObject, 3);
 
