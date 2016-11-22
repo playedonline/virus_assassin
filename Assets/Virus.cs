@@ -8,13 +8,16 @@ public class Virus : MonoBehaviour {
 	Transform spriteTransform;
 	HostFigure currentHost;
 	bool isFlying;
+	Healthbar healthbar;
 
 	void Start () {
 		body = GetComponent<Rigidbody2D> ();
 		body.drag = 3f;
 		animator = GetComponentInChildren<Animator> ();
 		spriteTransform = transform.Find ("Sprite");
+		healthbar = GetComponentInChildren<Healthbar> ();
 		SetIdleOutOfHost ();
+		healthbar.Init (4);
 
 	}
 
@@ -29,18 +32,34 @@ public class Virus : MonoBehaviour {
 		transform.localEulerAngles = new Vector3 (0, 0, 0);
 		DOTween.Kill (spriteTransform);
 		spriteTransform.DOScale (new Vector3 (1.7f, 0.2f, 0), 0.2f).SetEase(Ease.InOutSine).SetLoops (-1, LoopType.Yoyo);
-		currentHost = null;
+		LeaveHost ();
 		isFlying = true;
+
 	}
 
+	void LeaveHost()
+	{
+		if (currentHost != null) {
+			healthbar.Init (4);
+			currentHost = null;
+		}
+	}
 	void Update()
 	{
 		if (body.velocity.magnitude < 5 && isFlying)
 			SetIdleOutOfHost ();
+
+		if (currentHost == null && healthbar.isEmpty)
+			Die ();		
 	}
 		
+	void Die()
+	{
+		
+	}
+
 	void SetIdleOutOfHost()
-	{		
+	{				
 		isFlying = false;
 		animator.Play ("Virus Idle");
 		spriteTransform.localScale = Vector3.one;
@@ -52,11 +71,12 @@ public class Virus : MonoBehaviour {
 	{
 		currentHost = newHost;
 		DOTween.Kill (spriteTransform);
-		transform.parent = newHost.transform;
+		transform.parent = newHost.visualContainer;
 		spriteTransform.localScale = Vector3.zero;
 		transform.localPosition = Vector3.zero;
 		body.velocity = Vector2.zero;
 		isFlying = false;
+		healthbar.Disable ();
 	}
 
 
@@ -64,9 +84,7 @@ public class Virus : MonoBehaviour {
 	{
 		if (!isFlying)
 			return;
-		
-		Debug.Log ("OntriggerEnter");
-		HostFigure hostHit = other.GetComponent<HostFigure> ();
+		HostFigure hostHit = other.GetComponentInParent<HostFigure> ();
 		if (hostHit != null) {
 			hostHit.OnHit ();
 			SetHost (hostHit);
