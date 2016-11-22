@@ -39,6 +39,7 @@ public class GameManager : MonoBehaviour {
             bgsr.transform.parent = bg.transform;
             bgsr.transform.localPosition = new Vector3(x, y);
             bgsr.sprite = bgSprite;
+            bgsr.sortingLayerName = "Background";
             bgsr.sortingOrder = -1;
 
             x += bgSprite.bounds.size.x;

@@ -4,7 +4,7 @@ using DG.Tweening;
 public class HostFigure : MonoBehaviour {
     private const float PATH_POINT_DIFF = 3;
 
-    public float maxSpeed = 3;
+    public float speed = 3;
 	public HostFigureType hostType;
 
     private bool m_isInfected = false;
@@ -41,7 +41,8 @@ public class HostFigure : MonoBehaviour {
         Vector3 nextPoint = m_pathPoints[pointIndex];
         m_spriteRenderer.transform.localScale = new Vector3 (nextPoint.x - transform.localPosition.x < 0 ? 1 : -1, 1, 1);
 
-        currentMoveTween = transform.DOLocalMove(nextPoint, 2).SetEase(Ease.Linear).OnComplete(() => {
+        float duration = Vector3.Distance(transform.localPosition, nextPoint) / speed;
+        currentMoveTween = transform.DOLocalMove(nextPoint, duration).SetEase(Ease.Linear).OnComplete(() => {
             if(m_pathPoints.Count - 1 <= pointIndex){
                 m_pathPoints.Reverse();
                 pointIndex = 0;
@@ -96,6 +97,7 @@ public class HostFigure : MonoBehaviour {
 
     void Update() {
         m_spriteRenderer.transform.rotation = Quaternion.identity;
+        m_spriteRenderer.sortingOrder = -Mathf.RoundToInt(transform.localPosition.y * 1000);
 
         if (m_isInfected && healthBar.isEmpty)
             Die();
