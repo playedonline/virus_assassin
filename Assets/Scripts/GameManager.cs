@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour {
     private List<HostFigure> hostFigures = new List<HostFigure>();
 	private int comboCounter;
 	private float comboStartTime;
+    public GameOver gameOver;
 
     void Awake(){
 		GameManager.Instance = this;
@@ -103,6 +104,11 @@ public class GameManager : MonoBehaviour {
 			ShowFloatingText (player.transform.position + Vector3.up * 3, "AWESOME!", 1, false, true);
 	}
 
+
+    public void OnVirusDie(){
+        targetPointer.Init (null, null);
+        gameOver.gameObject.SetActive(true);
+    }
 
     public void ReSpawnSoldier(){
         int retries = 100;

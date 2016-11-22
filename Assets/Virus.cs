@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using DG.Tweening;
 
 public class Virus : MonoBehaviour {
@@ -69,7 +68,8 @@ public class Virus : MonoBehaviour {
 		
 	public void Die()
 	{
-		UnityEngine.SceneManagement.SceneManager.LoadScene ("main");
+        Destroy(gameObject);
+        GameManager.Instance.OnVirusDie();
 	}
 
 	void SetIdleOutOfHost()
