@@ -10,6 +10,8 @@ public class Virus : MonoBehaviour {
 	bool isFlying;
 	Healthbar healthbar;
 	float lastLaunchTime;
+	private HostFigure previousHost;
+
 
 	void Start () {
 		body = GetComponent<Rigidbody2D> ();
@@ -41,6 +43,7 @@ public class Virus : MonoBehaviour {
 	void LeaveHost()
 	{
 		if (currentHost != null) {
+			previousHost = currentHost;
 			healthbar.Init (2);
 			currentHost = null;
 		}
@@ -87,7 +90,7 @@ public class Virus : MonoBehaviour {
 			return;
 		
 		HostFigure hostHit = other.GetComponentInParent<HostFigure> ();
-		if (hostHit != null) {
+		if (hostHit != null && (previousHost == null || hostHit != previousHost)) {
 			hostHit.OnHit ();
 			SetHost (hostHit);
 		}

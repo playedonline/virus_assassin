@@ -33,12 +33,11 @@ public class Flingable : MonoBehaviour {
 			GetComponent<Virus> ().Launch (aimDirection.normalized, aimAngle);
 			DOTween.Kill (Camera.main);
 			Camera.main.DOOrthoSize (10, 0.3f);
-
 		}
 
 		if (didInitiatedFling) {			
 			// update aim arrow
-			aimDirection = transform.position - mousePos;
+			aimDirection = flingStartPosition - mousePos;
 			aimAngle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg;
 			if(aimAngle < 0) aimAngle += 360;
 

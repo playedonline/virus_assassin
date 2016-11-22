@@ -8,7 +8,6 @@ public class HostFigure : MonoBehaviour {
 	public HostFigureType hostType;
 
     private bool m_isInfected = false;
-    private float m_infectedTime = 0;
     private SpriteRenderer m_spriteRenderer;
 	public Transform visualContainer;
 	private Animator m_animator;
@@ -69,8 +68,7 @@ public class HostFigure : MonoBehaviour {
 
 		GameManager.Instance.ShowFloatingText(transform.position, "+" + score);
 		
-        m_isInfected = true;
-        m_infectedTime = Time.realtimeSinceStartup;
+        m_isInfected = true;        
 		hostType = HostFigureType.Zombie;
 		UpdateAnimationState ("Walk Front");
 		m_spriteRenderer.transform.DOPunchScale (Vector3.one * 0.4f, 0.4f);
