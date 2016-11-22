@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour {
 	public static float HORIZONTAL_TILES = 8;
 	public static float VERTICAL_TILES = 4;
 	public const float comboActiveThreshold = 1.2f;
+    public static bool startAnimationShown = true;
 
 	public static GameManager Instance;
 	public int score;
@@ -73,10 +74,12 @@ public class GameManager : MonoBehaviour {
         comboText = GameObject.Find ("comboText").GetComponent<Text> ();
         comboCanvasGroup = GameObject.Find ("ComboMeter").GetComponent<CanvasGroup> ();
 
-        if(PlayerPrefs.GetInt("skip_start_animation", 0) == 1)
+        if(startAnimationShown)
             StartGame();
-        else
+        else {
             DisplayStartAnimation();
+            startAnimationShown = true;
+        }
     }
 
     void DisplayStartAnimation(){
@@ -88,7 +91,6 @@ public class GameManager : MonoBehaviour {
     }
 
     public void StartGame(){
-        PlayerPrefs.SetInt("skip_start_animation", 0);
         Time.timeScale = 1;
         player = (Instantiate(Resources.Load("Virus")) as GameObject).GetComponent<Virus> ();
 		Camera.main.GetComponent<SmoothCameraFollow> ().target = player.transform;
