@@ -31,7 +31,6 @@ public class LeaderSequence : MonoBehaviour {
         DOTween.Kill(Camera.main, false);
 
         GameManager.Instance.scoreText.gameObject.SetActive(false);
-        //GameManager.Instance.comboText.transform.parent.gameObject.SetActive(false);
         GameManager.Instance.targetPointer.gameObject.SetActive(false);
 
         mac.transform.parent = null;
@@ -76,7 +75,6 @@ public class LeaderSequence : MonoBehaviour {
         }).InsertCallback(4.3f, () => {
             DOTween.To(value => Time.timeScale = value, 0, 1, 0.3f).SetEase(Ease.InCubic).SetUpdate(UpdateType.Normal, true);
             GameManager.Instance.scoreText.gameObject.SetActive(true);
-            GameManager.Instance.comboText.transform.parent.gameObject.SetActive(true);
             GameManager.Instance.targetPointer.gameObject.SetActive(true);
 			if (callback != null);
 				callback();
