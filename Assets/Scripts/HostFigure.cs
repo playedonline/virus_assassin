@@ -143,7 +143,7 @@ public class HostFigure : MonoBehaviour {
 	{
 		healthBar.Disable ();
 		healthBar = bossHealthBar;
-		bossHealthBar.Init (30, false);
+		bossHealthBar.Init (3, false);
 		isBoss = true;
 		CircleCollider2D collider = GetComponentInChildren<CircleCollider2D> ();
 		collider.offset = new Vector2 (0, 1.41f);
@@ -162,13 +162,14 @@ public class HostFigure : MonoBehaviour {
 	{
 		SpawnExplsionPS ();
 
-		DOVirtual.DelayedCall (2, () => {
-
+		DOVirtual.DelayedCall (0.8f, () => {
 			GameObject ps = Instantiate (Resources.Load<GameObject> ("BigBoom"));
 			ps.transform.position = transform.position;
 			ps.SetActive (true);
 			Destroy (ps.gameObject, 4);
+		});
 
+		DOVirtual.DelayedCall (1.3f, () => {
 			isDead = false;
 			isBoss = false;
 			MoveToNextPoint ();

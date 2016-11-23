@@ -155,13 +155,16 @@ public class GameManager : MonoBehaviour {
 		if (hf.hostType == HostFigureType.Trump) {			
 		} else {
 			score += 1;
-			score = Mathf.Min (score, powerMax);
 			ShowFloatingPowerText (hf.transform.position + Vector3.up * 2, score.ToString(), 0.8f, true, true);
 
 			if (score == powerMax && targetPointer == null) {
-				ShowFloatingText (player.transform.position + Vector3.up * 3,  "POWERED UP & READY TO ATTACK!", 0.8f, false,true, 1);
+				ShowFloatingText (player.transform.position + Vector3.up * 3, "ATTACK NOW!", 0.8f, false, true, 1);
 				SpawnNewTarget ();
+			} else if (score == powerMax) {
+				ShowFloatingText (player.transform.position + Vector3.up * 3,  "ATTACK NOW!", 0.8f, false,true, 1);
 			}
+
+			score = Mathf.Min (score, powerMax);
 		}
 		
         //UpdateComboCounter (hf.transform.position + Vector3.up * 3f);
