@@ -62,6 +62,7 @@ public class LeaderSequence : MonoBehaviour {
                 mac.transform.DOLocalMoveY(hostFigure.transform.localPosition.y, 0.3f).SetEase(Ease.InExpo).OnComplete(() => {
                     Camera.main.DOShakePosition(0.5f, Vector3.down).SetUpdate(UpdateType.Normal, true);
                     hostFigure.SetHostType(HostFigureType.TrumpMAC);
+					DarkTonic.MasterAudio.MasterAudio.PlaySound("arrive");
                     smokePS.gameObject.SetActive(true);
                     Destroy(mac.gameObject);
                     Destroy(smokePS.gameObject, 1);
