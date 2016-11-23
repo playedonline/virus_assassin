@@ -116,7 +116,7 @@ public class HostFigure : MonoBehaviour {
     void Update() {
         m_spriteRenderer.sortingOrder = -Mathf.RoundToInt(transform.localPosition.y * 1000);
 
-		if (m_isInfected && healthBar.isEmpty && !isDead)
+		if ((isBoss || m_isInfected) && healthBar.isEmpty && !isDead)
             Die();
     }
 
@@ -137,13 +137,30 @@ public class HostFigure : MonoBehaviour {
 
 	public void SetToBossMode(Healthbar bossHealthBar)
 	{
-		Destroy (healthBar.gameObject);
+		healthBar.Disable ();
 		healthBar = bossHealthBar;
 		bossHealthBar.Init (30, false);
 		isBoss = true;
 		CircleCollider2D collider = GetComponentInChildren<CircleCollider2D> ();
 		collider.offset = new Vector2 (0, 1.41f);
 		collider.radius = 2.04f;
+	}
+
+	public void RevertBossMode()
+	{
+		GameObject ps = Instantiate (Resources.Load<GameObject> ("MecExplodePS"));
+		ps.transform.position = transform.position + Vector3.up * 1.5f;
+		ps.SetActive (true);
+		Destroy (ps.gameObject, 4);
+
+		DOVirtual.DelayedCall (2, () => {
+			isDead = false;
+			isBoss = false;
+			MoveToNextPoint ();
+			healthBar = GetComponentInChildren<Healthbar> (true);
+			healthBar.Init (3);
+			SetHostType (HostFigureType.Trump);
+		});
 	}
 }
 

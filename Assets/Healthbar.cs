@@ -43,6 +43,6 @@ public class Healthbar : MonoBehaviour {
 	{
 		gameObject.SetActive (false);
 	}
-
+		
 	public bool isEmpty { get { return healthLeft <= 0; } }
 }

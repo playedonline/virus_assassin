@@ -102,8 +102,15 @@ public class GameManager : MonoBehaviour {
 		GameObject bossBar = GameObject.Find ("BossBar");
 		bossBar.GetComponent<CanvasGroup> ().DOFade (1, 0.5f);
 		mainTarget.SetToBossMode (bossBar.GetComponentInChildren<Healthbar> ());
-		
 	}
+
+	void BossPhaseEnd()
+	{
+		GameObject bossBar = GameObject.Find ("BossBar");
+		bossBar.GetComponent<CanvasGroup> ().DOFade (0, 0.5f);
+		mainTarget.RevertBossMode ();
+	}
+
     public void StartGame(){
         Time.timeScale = 1;
         player = (Instantiate(Resources.Load("Virus")) as GameObject).GetComponent<Virus> ();
@@ -140,6 +147,8 @@ public class GameManager : MonoBehaviour {
 		if (hf.hostType == HostFigureType.Trump) {
 			gameOverScreen.Show (true);
 		}
+		if (hf.isBoss)
+			BossPhaseEnd ();		
     }
 		
     public void OnHostFigureInfected(HostFigure hf){
@@ -150,7 +159,7 @@ public class GameManager : MonoBehaviour {
 			ShowFloatingPowerText (hf.transform.position + Vector3.up * 2, score.ToString(), 0.8f, true, true);
 
 			if (score == 2 && targetPointer == null) {
-				ShowFloatingText (player.transform.position + Vector3.up * 3,  "READY! ATTACK TARGET!", 0.8f, false,true, 1);
+				ShowFloatingText (player.transform.position + Vector3.up * 3,  "ATTACK TARGET!", 0.8f, false,true, 1);
 				SpawnNewTarget ();
 
 			}

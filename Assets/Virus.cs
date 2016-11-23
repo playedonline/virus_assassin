@@ -44,7 +44,7 @@ public class Virus : MonoBehaviour {
 	{
 		if (currentHost != null) {
 			previousHost = currentHost;
-			healthbar.Init (2.5f);
+			healthbar.Init (3.5f);
 			currentHost.healthBar.healthLeft = 0;
 			currentHost = null;
 		}
