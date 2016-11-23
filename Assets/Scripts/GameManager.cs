@@ -40,7 +40,8 @@ public class GameManager : MonoBehaviour {
 		canvas = GameObject.Find ("Canvas").GetComponent<Canvas> ();
         m_hostFigurePrefab = Resources.Load("Soldier");
 
-        targetPointer = transform.GetComponentInChildren<OffscreenPointer>(true);
+        targetPointer = (Instantiate(Resources.Load("TargetPointer")) as GameObject).GetComponent<OffscreenPointer>();
+        targetPointer.transform.parent = transform;
 
         Application.targetFrameRate = 60;
 
