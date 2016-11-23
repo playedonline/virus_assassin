@@ -141,6 +141,9 @@ public class HostFigure : MonoBehaviour {
 		healthBar = bossHealthBar;
 		bossHealthBar.Init (30, false);
 		isBoss = true;
+		CircleCollider2D collider = GetComponentInChildren<CircleCollider2D> ();
+		collider.offset = new Vector2 (0, 1.41f);
+		collider.radius = 2.04f;
 	}
 }
 

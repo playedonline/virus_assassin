@@ -98,7 +98,8 @@ public class Virus : MonoBehaviour {
 			Vector2 knockBackForce = body.velocity.normalized;
 			knockBackForce *= Mathf.Clamp(body.velocity.magnitude/5, 0, 3);
 			hostHit.OnHit (knockBackForce);
-			SetHost (hostHit);
+			if (!hostHit.isBoss)
+				SetHost (hostHit);
 		}
 	}
 }
