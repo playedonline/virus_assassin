@@ -83,18 +83,18 @@ public class GameManager : MonoBehaviour {
         if(startAnimationShown)
             StartGame();
         else {
-            DisplayStartAnimation();
+            DisplayStartSequence();
             startAnimationShown = true;
         }
     }
 
-    void DisplayStartAnimation(){
+    void DisplayStartSequence(){
         Time.timeScale = 0;
         GameObject animationGO = Instantiate(Resources.Load("KJStartAnimation")) as GameObject;
         animationGO.transform.parent = canvas.transform;
         animationGO.transform.localPosition = Vector3.zero;
         animationGO.transform.localScale = Vector3.one;
-        animationGO.GetComponent<StartAnimation>().Animation();
+        animationGO.GetComponent<StartSequence>().Animation();
     }
 
     void DisplayLeaderSequence(){
