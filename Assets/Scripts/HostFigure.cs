@@ -95,8 +95,12 @@ public class HostFigure : MonoBehaviour {
 	private void UpdateAnimationState(string newState)
 	{
 		m_animator.Play (hostType.ToString() + " " + newState); // set to the correct skin for this character
-
 	}
+
+    public void SetHostType(HostFigureType newHostType){
+        hostType = newHostType;
+        UpdateAnimationState("Walk Front");
+    }
 
     void Update() {
         m_spriteRenderer.transform.rotation = Quaternion.identity;
@@ -118,5 +122,6 @@ public class HostFigure : MonoBehaviour {
 public enum HostFigureType {
 	Soldier,
 	Zombie,
-    Trump
+    Trump,
+    TrumpMAC
 }

@@ -36,7 +36,7 @@ public class LeaderSequence : MonoBehaviour {
             Camera.main.transform.DOLocalMove(new Vector3(hostFigure.transform.localPosition.x, hostFigure.transform.localPosition.y, Camera.main.transform.localPosition.z), 0.3f).SetUpdate(UpdateType.Normal, true);
         }).InsertCallback(0.8f, () => {
             DOTween.Kill(Camera.main, false);
-            Camera.main.DOOrthoSize(4, 0.6f).SetEase(Ease.OutBack).SetUpdate(UpdateType.Normal, true);
+            Camera.main.DOOrthoSize(5, 0.6f).SetEase(Ease.OutBack).SetUpdate(UpdateType.Normal, true);
         }).Insert(1.1f,
                 topBG.transform.DOLocalMove(topBGPos, 0.3f).SetEase(Ease.InExpo)
         ).Insert(1.1f,
@@ -52,6 +52,7 @@ public class LeaderSequence : MonoBehaviour {
             bottomBG.transform.DOLocalMove(bottomBGHiddenPos, 0.4f).SetUpdate(UpdateType.Normal, true);
             image.transform.DOLocalMove(imageHiddenPos, 0.5f).SetUpdate(UpdateType.Normal, true);
             text.transform.DOLocalMove(textHiddenPos, 0.4f).SetUpdate(UpdateType.Normal, true);
+            hostFigure.SetHostType(HostFigureType.TrumpMAC);
         }).InsertCallback(3.2f, () => {
             DOTween.To(value => Time.timeScale = value, 0, 1, 0.3f).SetEase(Ease.InCubic).SetUpdate(UpdateType.Normal, true);
             Destroy(gameObject);

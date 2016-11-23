@@ -9,8 +9,8 @@ public class GameManager : MonoBehaviour {
 	public static float HORIZONTAL_TILES = 8;
 	public static float VERTICAL_TILES = 4;
 	public const float comboActiveThreshold = 1.2f;
-    public static bool startAnimationShown = false;
-	private static List<HostFigureType> hostFigureTypesShown = new List<HostFigureType>();
+    public static bool startAnimationShown = true;
+    public static bool leaderAnimationShown = false;
 
 	public static GameManager Instance;
 	public int score;
@@ -74,9 +74,6 @@ public class GameManager : MonoBehaviour {
             }
         }
 
-        if(hostFigureTypesShown.Count == 0)
-            hostFigureTypesShown.Add(HostFigureType.Soldier);
-
         comboText = GameObject.Find ("comboText").GetComponent<Text> ();
         comboCanvasGroup = GameObject.Find ("ComboMeter").GetComponent<CanvasGroup> ();
 
@@ -130,8 +127,8 @@ public class GameManager : MonoBehaviour {
 			comboCounter = 0;
 		}
 
-        if(player != null && mainTarget != null && hostFigureTypesShown.IndexOf(mainTarget.hostType) == -1 && Vector3.Distance(player.transform.localPosition, mainTarget.transform.localPosition) < 9){
-            hostFigureTypesShown.Add(mainTarget.hostType);
+        if(player != null && mainTarget != null && !leaderAnimationShown && Vector3.Distance(player.transform.localPosition, mainTarget.transform.localPosition) < 9){
+            leaderAnimationShown = true;
             DisplayLeaderSequence();
         }
 	}
