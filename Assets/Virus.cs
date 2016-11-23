@@ -11,7 +11,6 @@ public class Virus : MonoBehaviour {
 	float lastLaunchTime;
 	private HostFigure previousHost;
 
-
 	void Start () {
 		body = GetComponent<Rigidbody2D> ();
 		body.drag = 3f;

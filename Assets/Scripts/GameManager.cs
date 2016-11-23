@@ -145,26 +145,30 @@ public class GameManager : MonoBehaviour {
 
     public void OnHostFigureDie(HostFigure hf){
         hostFigures.Remove(hf);
-		if (hf.hostType == HostFigureType.Trump) {
-			gameOverScreen.Show (true);
+		if (hf.wasTrump) {			
+			DOVirtual.DelayedCall (1.5f, () => {
+				gameOverScreen.Show (true);
+			});
 		}
 		if (hf.isBoss)
 			BossPhaseEnd ();		
     }
 		
     public void OnHostFigureInfected(HostFigure hf){
-		if (hf.hostType == HostFigureType.Trump) {			
+		if (hf.hostType == HostFigureType.Trump) {		
+			Destroy (player.GetComponent<Flingable> ());	
 		} else {
 			score += 1;
-			ShowFloatingPowerText (hf.transform.position + Vector3.up * 2, score.ToString(), 0.8f, true, true);
+			if (score <= powerMax)
+				ShowFloatingPowerText (hf.transform.position + Vector3.up * 2, score.ToString(), 0.8f, true, true);
 
 			if (score == powerMax && targetPointer == null) {
 				foreach (GameObject floatingLabel in floatingLabels)
                     Destroy(floatingLabel);
-				ShowFloatingText(player.transform.position + Vector3.up * 3, "ATTACK NOW!", 0.8f, false, true, 1, true);
+				ShowFloatingText(player.transform.position + Vector3.up * 3, "MAX POWER, ATTACK!", 0.8f, false, true, 1, true);
 				SpawnNewTarget ();
 			} else if (score == powerMax) {
-				ShowFloatingText (player.transform.position + Vector3.up * 3,  "ATTACK NOW!", 0.8f, false,true, 1);
+				ShowFloatingText (player.transform.position + Vector3.up * 3,  "MAX POWER, ATTACK!", 0.8f, false,true, 1);
 			}
 
 			score = Mathf.Min (score, powerMax);

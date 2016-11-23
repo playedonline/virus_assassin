@@ -17,7 +17,7 @@ public class HostFigure : MonoBehaviour {
     private Tweener currentMoveTween;
     public Healthbar healthBar;
 	public bool isBoss;
-
+	public bool wasTrump;
 	public void Init(HostFigureType hostType){
         this.hostType = hostType;
         UpdateAnimationState ("Walk Front");
@@ -64,7 +64,9 @@ public class HostFigure : MonoBehaviour {
 		splatPS.transform.position = transform.position + Vector3.up;
 		Destroy (splatPS, 2);
 		GameManager.Instance.OnHostFigureInfected (this);
-		//DOVirtual.DelayedCall (0.5f, TurnToZombie);		
+		if (hostType == HostFigureType.Trump)
+			wasTrump = true;
+		
 		TurnToZombie();
         m_isInfected = true;        
 		m_spriteRenderer.transform.DOPunchScale (Vector3.one * 0.4f, 0.4f);
@@ -147,7 +149,7 @@ public class HostFigure : MonoBehaviour {
 	{
 		healthBar.Disable ();
 		healthBar = bossHealthBar;
-		bossHealthBar.Init (3, false);
+		bossHealthBar.Init (10, false);
 		isBoss = true;
 		CircleCollider2D collider = GetComponentInChildren<CircleCollider2D> ();
 		collider.offset = new Vector2 (0, 1.41f);
@@ -166,6 +168,10 @@ public class HostFigure : MonoBehaviour {
 	{
 		SpawnExplsionPS ();
 
+		DarkTonic.MasterAudio.MasterAudio.PlaySound ("explosion");
+		DarkTonic.MasterAudio.MasterAudio.PlaySound ("explosion", 1, 1, 0.05f);
+		DarkTonic.MasterAudio.MasterAudio.PlaySound ("explosion", 1, 1, 0.15f);
+
 		DOVirtual.DelayedCall (0.8f, () => {
 			GameObject ps = Instantiate (Resources.Load<GameObject> ("BigBoom"));
 			ps.transform.position = transform.position + Vector3.down * 2;
@@ -179,7 +185,7 @@ public class HostFigure : MonoBehaviour {
 			pointIndex = 0;
 			MoveToNextPoint ();
 			healthBar = GetComponentInChildren<Healthbar> (true);
-			healthBar.Init (3);
+			healthBar.Init (2);
 			SetHostType (HostFigureType.Trump);
 		});
 	}
