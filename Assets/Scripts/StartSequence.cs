@@ -35,7 +35,13 @@ public class StartSequence : MonoBehaviour{
         Vector3 whiteGradHiddenPos = whiteGrad.transform.localPosition;
         Vector3 kjImageHiddenPos = kjImage.transform.localPosition;
 
+        whiteGrad.DOFade(0, 0).SetUpdate(UpdateType.Normal, true);
+
         DOTween.Sequence().Insert(0,
+                whiteGrad.transform.DOLocalMoveY(5.57f, 1).SetEase(Ease.Linear)
+        ).Insert(0,
+                whiteGrad.DOFade(1, 1.4f)
+        ).Insert(0,
                 whiteGrad.transform.DOLocalMoveY(5.57f, 1).SetEase(Ease.Linear)
         ).Insert(1f,
                 whiteGrad.transform.DOScaleX(60, 0.5f).SetEase(Ease.OutBack)
@@ -49,7 +55,6 @@ public class StartSequence : MonoBehaviour{
                 whiteGrad.DOFade(0, 0.4f).OnComplete(() => {
                     whiteGrad.transform.localPosition = whiteGradHiddenPos;
                     whiteGrad.transform.DOScaleX(10, 0).SetUpdate(UpdateType.Normal, true);
-                    whiteGrad.DOFade(1, 0).SetUpdate(UpdateType.Normal, true);
                 })
         ).Insert(2.6f,
                 blackBG.transform.DOLocalMove(blackBGPos, 0.4f).SetEase(Ease.InExpo)
@@ -69,6 +74,8 @@ public class StartSequence : MonoBehaviour{
             bubble.transform.DOScale(Vector3.zero, 0.4f).SetUpdate(UpdateType.Normal, true);
         }).Insert(5.3f + TypeAnimationDuration(),
                 whiteGrad.transform.DOLocalMoveY(5.57f, 0.25f).SetEase(Ease.Linear)
+        ).Insert(5.3f,
+                whiteGrad.DOFade(1, 0.35f)
         ).Insert(5.55f + TypeAnimationDuration(),
                 whiteGrad.transform.DOScaleX(60, 0.125f).SetEase(Ease.Linear)
         ).Insert(5.65f + TypeAnimationDuration(),
