@@ -39,7 +39,7 @@ public class LeaderSequence : MonoBehaviour {
         mac.transform.localPosition = new Vector3(hostFigure.transform.localPosition.x, hostFigure.transform.localPosition.y + GameManager.SCREEN_HEIGHT);
 
         smokePS.transform.parent = null;
-        smokePS.transform.localPosition = new Vector3(hostFigure.transform.localPosition.x, hostFigure.transform.localPosition.y - 3);
+        smokePS.transform.localPosition = new Vector3(hostFigure.transform.localPosition.x, hostFigure.transform.localPosition.y - 0.5f);
 
 
         DOTween.Sequence().Insert(0f,
