@@ -23,10 +23,8 @@ public class GameOver : MonoBehaviour {
 	{
 		gameObject.SetActive (true);
 
-		if (success)
-			scoreText.text = string.Format("임무 완수!");
-		else
-			scoreText.text = string.Format("실패!");
+		transform.Find ("text_lose").gameObject.SetActive (!success);
+		transform.Find ("text_win").gameObject.SetActive (success);	
 		
 		DOVirtual.DelayedCall(0.5f, () => {
 			allowRestart = true;

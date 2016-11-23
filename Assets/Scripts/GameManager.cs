@@ -242,18 +242,18 @@ public class GameManager : MonoBehaviour {
 	public void ShowFloatingText(Vector3 origin, string text, float scaleFactor = 1, bool punch = false, bool rotate = false)
 	{
 		GameObject floatingLabel = Instantiate<GameObject> (Resources.Load<GameObject> ("FloatingLabel"));
-		FloatLabel (floatingLabel);
+		FloatLabel (floatingLabel,origin,text,scaleFactor,punch,rotate);
 
 	}
 	public void ShowFloatingPowerText(Vector3 origin, string text, float scaleFactor = 1, bool punch = false, bool rotate = false)
 	{
 		GameObject floatingLabel = Instantiate<GameObject> (Resources.Load<GameObject> ("FloatingPowerLabel"));
-		FloatLabel (floatingLabel);
+		FloatLabel (floatingLabel,origin,text,scaleFactor,punch,rotate);
 	}
 
-	void FloatLabel(GameObject floatingLabel, Vector3 origin, string text, float scaleFactor = 1, bool punch = false, bool rotate = false))
+	void FloatLabel(GameObject floatingLabel, Vector3 origin, string text, float scaleFactor = 1, bool punch = false, bool rotate = false)
 	{
-		floatingLabel.GetComponent<Text>().text = text;
+		floatingLabel.GetComponentInChildren<Text>().text = text;
 		floatingLabel.transform.position = origin;
 		floatingLabel.transform.SetParent (canvas.transform, true);
 		floatingLabel.transform.localScale = Vector3.one * scaleFactor;
@@ -267,7 +267,7 @@ public class GameManager : MonoBehaviour {
 		if (punch)
 			floatingLabel.transform.DOPunchScale (Vector3.one * 0.3f, 1);
 
-		floatingLabel.DOFade (0f, 1.5f);
+		floatingLabel.GetComponent<CanvasGroup>().DOFade (0f, 1.5f);
 		floatingLabel.transform.DOLocalMoveY (80, 1).SetRelative(true);
 		Destroy (floatingLabel.gameObject, 3);
 	}
