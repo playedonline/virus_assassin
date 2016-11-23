@@ -9,17 +9,17 @@ public class GameManager : MonoBehaviour {
 	public static float HORIZONTAL_TILES = 8;
 	public static float VERTICAL_TILES = 4;
 	public const float comboActiveThreshold = 1.2f;
-    public static bool startAnimationShown = false;
+    public static bool startAnimationShown = true;
+	private static List<HostFigureType> hostFigureTypesShown = new List<HostFigureType>();
 
 	public static GameManager Instance;
 	public int score;
 
     private Object m_hostFigurePrefab;
-	private List<HostFigureType> hostFigureTypesShown = new List<HostFigureType>();	
 	public Bounds spawnableArea;
 	public HostFigure mainTarget;
     private OffscreenPointer targetPointer;
-    private Virus player;
+    public Virus player;
 	public Text scoreText;
 	private Canvas canvas;
     public Sprite bgSprite;
@@ -65,7 +65,8 @@ public class GameManager : MonoBehaviour {
             }
         }
 
-        hostFigureTypesShown.Add(HostFigureType.Soldier);
+        if(hostFigureTypesShown.Count == 0)
+            hostFigureTypesShown.Add(HostFigureType.Soldier);
 
         comboText = GameObject.Find ("comboText").GetComponent<Text> ();
         comboCanvasGroup = GameObject.Find ("ComboMeter").GetComponent<CanvasGroup> ();
@@ -88,7 +89,6 @@ public class GameManager : MonoBehaviour {
     }
 
     void DisplayLeaderSequence(){
-        Time.timeScale = 0;
         GameObject animationGO = Instantiate(Resources.Load("LeaderSequence")) as GameObject;
         animationGO.transform.parent = canvas.transform;
         animationGO.transform.localPosition = Vector3.zero;
@@ -121,7 +121,7 @@ public class GameManager : MonoBehaviour {
 			comboCounter = 0;
 		}
 
-        if(player != null && mainTarget != null && hostFigureTypesShown.IndexOf(mainTarget.hostType) == -1 && Vector3.Distance(player.transform.localPosition, mainTarget.transform.localPosition) < 4){
+        if(player != null && mainTarget != null && hostFigureTypesShown.IndexOf(mainTarget.hostType) == -1 && Vector3.Distance(player.transform.localPosition, mainTarget.transform.localPosition) < 9){
             hostFigureTypesShown.Add(mainTarget.hostType);
             DisplayLeaderSequence();
         }
