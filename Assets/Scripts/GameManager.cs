@@ -48,15 +48,24 @@ public class GameManager : MonoBehaviour {
 		spawnableArea.max = new Vector3 (38, 44, 0);
 		Bounds spawnTileBounds = new Bounds (Vector3.zero, new Vector3 (10.8f, 10.8f, 0));
 		float x = spawnableArea.min.x; 
-		float y = spawnableArea.min.y; 
-        GameObject bg = new GameObject("bg");
+		float y = spawnableArea.min.y;
 		Debug.Log (spawnableArea.min +","+ spawnableArea.max +","+ spawnTileBounds.min +","+ spawnTileBounds.max);
 		int tries = 0;
 		while(y < spawnableArea.max.y){
 			++tries;
 			Debug.Log ("spawn!");
-            for(int i = 0 ; i < Random.Range(1, 2) ; i++)
-				SpawnNewSoldier(new Vector3(Random.Range(x, x + spawnTileBounds.size.x), Random.Range(y, y + spawnTileBounds.size.y), 0));
+            for(int i = 0 ; i < Random.Range(1, 2) ; i++) {
+                Vector3 pos;
+                for(int j = 0 ; i < 100 ; i++){
+                    pos = new Vector3(Random.Range(x, x + spawnTileBounds.size.x), Random.Range(y, y + spawnTileBounds.size.y));
+
+                    // if far enough from player place
+                    if(Vector3.Distance(pos, Vector3.zero) > 3) {
+                        SpawnNewSoldier(pos);
+                        break;
+                    }
+                }
+            }
 
 			x += spawnTileBounds.size.x;
 			if(x > spawnableArea.max.x){
