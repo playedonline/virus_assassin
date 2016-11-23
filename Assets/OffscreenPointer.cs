@@ -41,6 +41,7 @@ public class OffscreenPointer : MonoBehaviour {
 		if (!inViewport) {
 			targetViewportPosition.x = Mathf.Clamp (targetViewportPosition.x, 0, 1);
 			targetViewportPosition.y = Mathf.Clamp (targetViewportPosition.y, 0, 1);
+			//Vector3 offset = 
 			transform.position = Camera.main.ViewportToWorldPoint (targetViewportPosition);
 		} else
 			transform.position = target.position;

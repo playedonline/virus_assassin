@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour {
 	public static float HORIZONTAL_TILES = 8;
 	public static float VERTICAL_TILES = 4;
 	public const float comboActiveThreshold = 1.2f;
-    public static bool startAnimationShown = false;
+    public static bool startAnimationShown = true;
     private bool leaderAnimationShown = false;
 
 	public static GameManager Instance;
@@ -147,10 +147,10 @@ public class GameManager : MonoBehaviour {
 		} else {
 			score += 1;
 			score = Mathf.Min (score, 10);
-			ShowFloatingPowerText (hf.transform.position + Vector3.up * 3, score.ToString(), 0.8f, true, true);
+			ShowFloatingPowerText (hf.transform.position + Vector3.up * 2, score.ToString(), 0.8f, true, true);
 
-			if (score == 10 && targetPointer == null) {
-				ShowFloatingText (player.transform.position + Vector3.up*3,  "READY! ATTACK TARGET!", 1, true,true);
+			if (score == 2 && targetPointer == null) {
+				ShowFloatingText (player.transform.position + Vector3.up * 3,  "READY! ATTACK TARGET!", 0.8f, false,true, 1);
 				SpawnNewTarget ();
 
 			}
@@ -221,9 +221,6 @@ public class GameManager : MonoBehaviour {
 
 	public void SpawnNewTarget()
 	{		
-		targetPointer = (Instantiate (Resources.Load ("TargetPointer")) as GameObject).GetComponent<OffscreenPointer> ();
-		targetPointer.transform.parent = transform;
-
 		mainTarget = Instantiate<GameObject>(Resources.Load<GameObject>("Soldier")).GetComponent<HostFigure>();
 		mainTarget.name = "Trump";
 		Vector3 randomPos = new Vector3 (Random.Range (spawnableArea.min.x, spawnableArea.max.x), Random.Range (spawnableArea.min.y, spawnableArea.min.y), 0);
@@ -238,22 +235,25 @@ public class GameManager : MonoBehaviour {
 		mainTarget.transform.localPosition = randomPos;
 		mainTarget.Init (HostFigureType.Trump);
 
+		targetPointer = (Instantiate (Resources.Load ("TargetPointer")) as GameObject).GetComponent<OffscreenPointer> ();
+		targetPointer.transform.parent = transform;
+		
 		targetPointer.Init (mainTarget.transform, player.transform);
 	}
 
-	public void ShowFloatingText(Vector3 origin, string text, float scaleFactor = 1, bool punch = false, bool rotate = false)
+	public void ShowFloatingText(Vector3 origin, string text, float scaleFactor = 1, bool punch = false, bool rotate = false, float fadeDelay = 0.3f)
 	{
 		GameObject floatingLabel = Instantiate<GameObject> (Resources.Load<GameObject> ("FloatingLabel"));
 		FloatLabel (floatingLabel,origin,text,scaleFactor,punch,rotate);
-
 	}
+
 	public void ShowFloatingPowerText(Vector3 origin, string text, float scaleFactor = 1, bool punch = false, bool rotate = false)
 	{
 		GameObject floatingLabel = Instantiate<GameObject> (Resources.Load<GameObject> ("FloatingPowerLabel"));
 		FloatLabel (floatingLabel,origin,text,scaleFactor,punch,rotate);
 	}
 
-	void FloatLabel(GameObject floatingLabel, Vector3 origin, string text, float scaleFactor = 1, bool punch = false, bool rotate = false)
+	void FloatLabel(GameObject floatingLabel, Vector3 origin, string text, float scaleFactor = 1, bool punch = false, bool rotate = false, float fadeDelay = 0.3f)
 	{
 		floatingLabel.GetComponentInChildren<Text>().text = text;
 		floatingLabel.transform.position = origin;
@@ -269,8 +269,8 @@ public class GameManager : MonoBehaviour {
 		if (punch)
 			floatingLabel.transform.DOPunchScale (Vector3.one * 0.3f, 1);
 
-		floatingLabel.GetComponent<CanvasGroup>().DOFade (0f, 1.5f).SetDelay(0.3f);
+		floatingLabel.GetComponent<CanvasGroup>().DOFade (0f, 1.5f).SetDelay(fadeDelay);
 		floatingLabel.transform.DOLocalMoveY (80, 1).SetRelative(true);
-		Destroy (floatingLabel.gameObject, 3);
+		Destroy (floatingLabel.gameObject, 3 + fadeDelay);
 	}
 }
