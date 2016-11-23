@@ -38,13 +38,13 @@ public class LeaderSequence : MonoBehaviour {
             DOTween.Kill(Camera.main, false);
             Camera.main.DOOrthoSize(4, 0.6f).SetEase(Ease.OutBack).SetUpdate(UpdateType.Normal, true);
         }).Insert(1.1f,
-                topBG.transform.DOLocalMove(topBGPos, 0.5f)
+                topBG.transform.DOLocalMove(topBGPos, 0.3f).SetEase(Ease.InExpo)
         ).Insert(1.1f,
-                bottomBG.transform.DOLocalMove(bottomBGPos, 0.5f)
-        ).Insert(1.5f,
-                image.transform.DOLocalMove(imagePos, 0.2f)
-        ).Insert(1.5f,
-                text.transform.DOLocalMove(textPos, 0.2f)
+                bottomBG.transform.DOLocalMove(bottomBGPos, 0.3f).SetEase(Ease.InExpo)
+        ).Insert(1.3f,
+                image.transform.DOLocalMove(imagePos, 0.3f).SetEase(Ease.InExpo)
+        ).Insert(1.3f,
+                text.transform.DOLocalMove(textPos, 0.3f).SetEase(Ease.InExpo)
         ).
         InsertCallback(2.6f, () => {
             Camera.main.DOOrthoSize(10, 0.6f).SetUpdate(UpdateType.Normal, true).SetEase(Ease.OutBack);
