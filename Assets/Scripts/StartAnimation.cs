@@ -34,13 +34,13 @@ public class StartAnimation : MonoBehaviour{
         DOTween.Sequence().Insert(
             1f, Camera.main.DOOrthoSize (4, 0.6f).SetUpdate(UpdateType.Normal, true).SetEase(Ease.OutBack)
         ).Insert(
-            1.8f, blackBG.transform.DOLocalMove(blackBGPos, 0.4f).SetUpdate(UpdateType.Normal, true)
+            1.8f, blackBG.transform.DOLocalMove(blackBGPos, 0.4f).SetEase(Ease.InExpo)
         ).Insert(
-            1.9f, kjBig.transform.DOLocalMove(kjBigPos, 0.6f).SetUpdate(UpdateType.Normal, true)
+            1.9f, kjBig.transform.DOLocalMove(kjBigPos, 0.6f).SetEase(Ease.InExpo)
         ).Insert(
-            2.4f, bubble.transform.DOLocalMove(bubblePos, 0.3f).SetUpdate(UpdateType.Normal, true)
+            2.4f, bubble.transform.DOLocalMove(bubblePos, 0.3f).SetEase(Ease.InExpo)
         ).Insert(
-            2.6f, bubble.transform.DOScale(Vector3.one, 0.1f).SetUpdate(UpdateType.Normal, true)
+            2.6f, bubble.transform.DOScale(Vector3.one, 0.1f).SetEase(Ease.InExpo)
         ).InsertCallback(2.7f,
             TypeAnimation
         ).InsertCallback(4f + TypeAnimationDuration(), () => {
