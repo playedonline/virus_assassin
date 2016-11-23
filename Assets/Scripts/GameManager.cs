@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour {
     private Object m_hostFigurePrefab;
 	public Bounds spawnableArea;
 	public HostFigure mainTarget;
-    private OffscreenPointer targetPointer;
+    public OffscreenPointer targetPointer;
     public Virus player;
 	public Text scoreText;
 	private Canvas canvas;
@@ -73,9 +73,6 @@ public class GameManager : MonoBehaviour {
 				y += spawnTileBounds.size.y;
             }
         }
-
-        if(hostFigureTypesShown.Count == 0)
-            hostFigureTypesShown.Add(HostFigureType.Soldier);
 
         comboText = GameObject.Find ("comboText").GetComponent<Text> ();
         comboCanvasGroup = GameObject.Find ("ComboMeter").GetComponent<CanvasGroup> ();
