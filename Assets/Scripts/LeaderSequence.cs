@@ -31,7 +31,7 @@ public class LeaderSequence : MonoBehaviour {
         DOTween.Kill(Camera.main, false);
 
         GameManager.Instance.scoreText.gameObject.SetActive(false);
-        GameManager.Instance.comboText.transform.parent.gameObject.SetActive(false);
+        //GameManager.Instance.comboText.transform.parent.gameObject.SetActive(false);
         GameManager.Instance.targetPointer.gameObject.SetActive(false);
 
         mac.transform.parent = null;

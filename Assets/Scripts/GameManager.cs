@@ -74,9 +74,9 @@ public class GameManager : MonoBehaviour {
             }
         }
 
-        comboText = GameObject.Find ("comboText").GetComponent<Text> ();
-        comboCanvasGroup = GameObject.Find ("ComboMeter").GetComponent<CanvasGroup> ();
-
+//        comboText = GameObject.Find ("comboText").GetComponent<Text> ();
+//        comboCanvasGroup = GameObject.Find ("ComboMeter").GetComponent<CanvasGroup> ();
+//
         if(startAnimationShown)
             StartGame();
         else {
@@ -143,16 +143,18 @@ public class GameManager : MonoBehaviour {
 
     public void OnHostFigureDie(HostFigure hf){
         hostFigures.Remove(hf);
+		if (hf.hostType == HostFigureType.Trump) {
+			gameOverScreen.Show (true);
+		}
     }
-
+		
     public void OnHostFigureInfected(HostFigure hf){
 		if (hf.hostType == HostFigureType.Trump) {
 			//score += 10;
-			SpawnNewTarget ();
 		} else {
 			score += 1;
 			score = Mathf.Min (score, 10);
-			ShowFloatingText (hf.transform.position + Vector3.up * 3, "+1 POWER", 0.8f, true, true);
+			ShowFloatingPowerText (hf.transform.position + Vector3.up * 3, score.ToString(), 0.8f, true, true);
 		}
 		
         //UpdateComboCounter (hf.transform.position + Vector3.up * 3f);
@@ -164,7 +166,7 @@ public class GameManager : MonoBehaviour {
     {
         comboStartTime = Time.time;
         comboCounter += 1;
-        comboText.text = comboCounter.ToString ();
+        //comboText.text = comboCounter.ToString ();
         comboCanvasGroup.alpha = 1;
         DOTween.Kill (comboCanvasGroup);
         comboCanvasGroup.DOFade (0, 0.4f).SetDelay(0.8f);
@@ -179,10 +181,9 @@ public class GameManager : MonoBehaviour {
     }
 
 
-
     public void OnVirusDie(){
         targetPointer.Init (null, null);
-		gameOverScreen.gameObject.SetActive(true);
+		gameOverScreen.Show (false);
 		isGameOver = true;
     }
 
@@ -240,8 +241,19 @@ public class GameManager : MonoBehaviour {
 
 	public void ShowFloatingText(Vector3 origin, string text, float scaleFactor = 1, bool punch = false, bool rotate = false)
 	{
-		Text floatingLabel = Instantiate<GameObject> (Resources.Load<GameObject> ("FloatingLabel")).GetComponent<Text>();
-		floatingLabel.text = text;
+		GameObject floatingLabel = Instantiate<GameObject> (Resources.Load<GameObject> ("FloatingLabel"));
+		FloatLabel (floatingLabel,origin,text,scaleFactor,punch,rotate);
+
+	}
+	public void ShowFloatingPowerText(Vector3 origin, string text, float scaleFactor = 1, bool punch = false, bool rotate = false)
+	{
+		GameObject floatingLabel = Instantiate<GameObject> (Resources.Load<GameObject> ("FloatingPowerLabel"));
+		FloatLabel (floatingLabel,origin,text,scaleFactor,punch,rotate);
+	}
+
+	void FloatLabel(GameObject floatingLabel, Vector3 origin, string text, float scaleFactor = 1, bool punch = false, bool rotate = false)
+	{
+		floatingLabel.GetComponentInChildren<Text>().text = text;
 		floatingLabel.transform.position = origin;
 		floatingLabel.transform.SetParent (canvas.transform, true);
 		floatingLabel.transform.localScale = Vector3.one * scaleFactor;
@@ -251,13 +263,12 @@ public class GameManager : MonoBehaviour {
 
 		if (rotate)
 			floatingLabel.transform.DOLocalRotate (new Vector3 (0, 0, 5 * (Random.value < 0.5f ? 1 : -1)), 0.3f).SetEase(Ease.OutBack);
-		
+
 		if (punch)
 			floatingLabel.transform.DOPunchScale (Vector3.one * 0.3f, 1);
-		
-		floatingLabel.DOFade (0f, 1.5f);
+
+		floatingLabel.GetComponent<CanvasGroup>().DOFade (0f, 1.5f);
 		floatingLabel.transform.DOLocalMoveY (80, 1).SetRelative(true);
 		Destroy (floatingLabel.gameObject, 3);
-
 	}
 }
