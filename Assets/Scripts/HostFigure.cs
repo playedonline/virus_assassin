@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using UnityEngine;
 using DG.Tweening;
+using UnityEngine;
 public class HostFigure : MonoBehaviour {
     private const float PATH_POINT_DIFF = 3;
 
