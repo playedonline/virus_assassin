@@ -74,6 +74,9 @@ public class GameManager : MonoBehaviour {
             }
         }
 
+        if(hostFigureTypesShown.Count == 0)
+            hostFigureTypesShown.Add(HostFigureType.Soldier);
+
         comboText = GameObject.Find ("comboText").GetComponent<Text> ();
         comboCanvasGroup = GameObject.Find ("ComboMeter").GetComponent<CanvasGroup> ();
 
