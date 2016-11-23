@@ -45,6 +45,7 @@ public class Virus : MonoBehaviour {
 		if (currentHost != null) {
 			previousHost = currentHost;
 			healthbar.Init (2.5f);
+			currentHost.healthBar.healthLeft = 0;
 			currentHost = null;
 		}
 	}
@@ -91,7 +92,7 @@ public class Virus : MonoBehaviour {
 			return;
 		
 		HostFigure hostHit = other.GetComponentInParent<HostFigure> ();
-		if (hostHit != null && (previousHost == null || hostHit != previousHost)) {
+		if (hostHit != null && !hostHit.isDead &&  (previousHost == null || hostHit != previousHost)) {
 			Vector2 knockBackForce = body.velocity.normalized;
 			knockBackForce *= Mathf.Clamp(body.velocity.magnitude/5, 0, 3);
 			hostHit.OnHit (knockBackForce);
