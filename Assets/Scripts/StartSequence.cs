@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,10 +18,25 @@ public class StartSequence : MonoBehaviour{
     private Vector3 bubbleHiddenPos;
     private string text;
 
+    private Dictionary<string, Sprite> KJShikuiSprites = new Dictionary<string, Sprite>();
+    private Dictionary<string, Sprite> KJSpeakSprites = new Dictionary<string, Sprite>();
+
     private float typeDelay = 0.02f;
     private float skullDelay = 0.6f;
 
     public void Animation() {
+        Sprite[] sprites = Resources.LoadAll<Sprite>("KJShikuiSprites");
+        for (int i = 0; i < sprites.Length; i++) {
+            Sprite s = sprites[i];
+            KJShikuiSprites.Add(s.name, s);
+        }
+
+        sprites = Resources.LoadAll<Sprite>("KJSpeakSprites");
+        for (int i = 0; i < sprites.Length; i++) {
+            Sprite s = sprites[i];
+            KJSpeakSprites.Add(s.name, s);
+        }
+
         text = bubbleText.text;
         bubbleText.text = "";
         bubble.transform.localScale = new Vector3(0, 0, 1);
@@ -31,7 +47,7 @@ public class StartSequence : MonoBehaviour{
 
         GameObject kjFigureGO = Instantiate(Resources.Load("KJUtemp")) as GameObject;
         SpriteRenderer whiteGrad = kjFigureGO.transform.Find("WhiteGradient").GetComponent<SpriteRenderer>();
-        SpriteRenderer kjImage = kjFigureGO.transform.Find("KJImage").GetComponent<SpriteRenderer>();
+        SpriteRenderer kjImage = kjFigureGO.transform.Find("Shikui").GetComponent<SpriteRenderer>();
         Vector3 whiteGradHiddenPos = whiteGrad.transform.localPosition;
         Vector3 kjImageHiddenPos = kjImage.transform.localPosition;
 
@@ -66,7 +82,21 @@ public class StartSequence : MonoBehaviour{
                 bubble.transform.DOScale(Vector3.one, 0.1f).SetEase(Ease.InExpo)
         ).InsertCallback(3.7f,
             TypeAnimation
-        ).InsertCallback(5f + TypeAnimationDuration(), () => {
+        ).InsertCallback(5f, () => {
+            kjImage.sprite = KJShikuiSprites["shikui01"];
+        }).InsertCallback(5.5f, () => {
+            kjImage.sprite = KJShikuiSprites["shikui02"];
+        }).InsertCallback(6f, () => {
+            kjImage.sprite = KJShikuiSprites["shikui03"];
+        }).InsertCallback(6.5f, () => {
+            kjImage.sprite = KJShikuiSprites["shikui04"];
+        }).InsertCallback(7f, () => {
+            kjImage.sprite = KJShikuiSprites["shikui05"];
+        }).InsertCallback(7.5f, () => {
+            GameManager.Instance.StartGame();
+        }).InsertCallback(8f, () => {
+            kjImage.sprite = KJShikuiSprites["shikui01"];
+        }).InsertCallback(5f + TypeAnimationDuration(), () => {
             Camera.main.DOOrthoSize (10, 0.6f).SetUpdate(UpdateType.Normal, true);
             blackBG.transform.DOLocalMove(blackBGHiddenPos, 0.5f).SetUpdate(UpdateType.Normal, true);
             kjBig.transform.DOLocalMove(kjBigHiddenPos, 0.5f).SetUpdate(UpdateType.Normal, true);
@@ -87,7 +117,7 @@ public class StartSequence : MonoBehaviour{
         ).InsertCallback(6.4f + TypeAnimationDuration(), () => {
             Destroy(kjFigureGO);
             Destroy(this.gameObject);
-            GameManager.Instance.StartGame();
+            Time.timeScale = 1;
         }).SetUpdate(UpdateType.Normal, true);
     }
 
@@ -101,7 +131,9 @@ public class StartSequence : MonoBehaviour{
         for(int i = 0 ; i < text.Length - 1 ; i++){
             string currentText = text.Substring(0, i + 1);
             if(!currentText.EndsWith(" ")) {
+                int frameIndex = tweensAmount % 3 + 1;
                 typeSequence.InsertCallback(typeDelay * tweensAmount, () => {
+                    kjBig.sprite = KJSpeakSprites["pe0" + frameIndex.ToString()];
                     bubbleText.text = currentText;
                 });
                 tweensAmount += 1;
