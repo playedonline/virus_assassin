@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour {
 	public const float comboActiveThreshold = 1.2f;
     public static bool startAnimationShown = true;
     private bool leaderAnimationShown = false;
+    private List<GameObject> floatingLabels = new List<GameObject>();
 
 	public static GameManager Instance;
 	public int score;
@@ -158,7 +159,9 @@ public class GameManager : MonoBehaviour {
 			ShowFloatingPowerText (hf.transform.position + Vector3.up * 2, score.ToString(), 0.8f, true, true);
 
 			if (score == powerMax && targetPointer == null) {
-				ShowFloatingText (player.transform.position + Vector3.up * 3, "ATTACK NOW!", 0.8f, false, true, 1);
+				foreach (GameObject floatingLabel in floatingLabels)
+                    Destroy(floatingLabel);
+				ShowFloatingText(player.transform.position + Vector3.up * 3, "ATTACK NOW!", 0.8f, false, true, 1, true);
 				SpawnNewTarget ();
 			} else if (score == powerMax) {
 				ShowFloatingText (player.transform.position + Vector3.up * 3,  "ATTACK NOW!", 0.8f, false,true, 1);
@@ -256,20 +259,21 @@ public class GameManager : MonoBehaviour {
 		DisplayLeaderSequence();
 	}
 
-	public void ShowFloatingText(Vector3 origin, string text, float scaleFactor = 1, bool punch = false, bool rotate = false, float fadeDelay = 0.3f)
+	public void ShowFloatingText(Vector3 origin, string text, float scaleFactor = 1, bool punch = false, bool rotate = false, float fadeDelay = 0.3f, bool preventTimeScale = false)
 	{
 		GameObject floatingLabel = Instantiate<GameObject> (Resources.Load<GameObject> ("FloatingLabel"));
-		FloatLabel (floatingLabel,origin,text,scaleFactor,punch,rotate);
+		FloatLabel (floatingLabel,origin,text,scaleFactor,punch,rotate, 0.3f, preventTimeScale);
 	}
 
-	public void ShowFloatingPowerText(Vector3 origin, string text, float scaleFactor = 1, bool punch = false, bool rotate = false)
+	public void ShowFloatingPowerText(Vector3 origin, string text, float scaleFactor = 1, bool punch = false, bool rotate = false, bool preventTimeScale = false)
 	{
 		GameObject floatingLabel = Instantiate<GameObject> (Resources.Load<GameObject> ("FloatingPowerLabel"));
-		FloatLabel (floatingLabel,origin,text,scaleFactor,punch,rotate);
+		FloatLabel (floatingLabel,origin,text,scaleFactor,punch,rotate, 0.3f, preventTimeScale);
 	}
 
-	void FloatLabel(GameObject floatingLabel, Vector3 origin, string text, float scaleFactor = 1, bool punch = false, bool rotate = false, float fadeDelay = 0.3f)
+	void FloatLabel(GameObject floatingLabel, Vector3 origin, string text, float scaleFactor = 1, bool punch = false, bool rotate = false, float fadeDelay = 0.3f, bool preventTimeScale = false)
 	{
+        floatingLabels.Add(floatingLabel);
 		floatingLabel.GetComponentInChildren<Text>().text = text;
 		floatingLabel.transform.position = origin;
 		floatingLabel.transform.SetParent (canvas.transform, true);
@@ -279,13 +283,16 @@ public class GameManager : MonoBehaviour {
 		floatingLabel.transform.localEulerAngles = new Vector3 (0, 0, 0);
 
 		if (rotate)
-			floatingLabel.transform.DOLocalRotate (new Vector3 (0, 0, 5 * (Random.value < 0.5f ? 1 : -1)), 0.3f).SetEase(Ease.OutBack);
+			floatingLabel.transform.DOLocalRotate (new Vector3 (0, 0, 5 * (Random.value < 0.5f ? 1 : -1)), 0.3f).SetEase(Ease.OutBack).SetUpdate(UpdateType.Normal, preventTimeScale);
 
 		if (punch)
-			floatingLabel.transform.DOPunchScale (Vector3.one * 0.3f, 1);
+			floatingLabel.transform.DOPunchScale (Vector3.one * 0.3f, 1).SetUpdate(UpdateType.Normal, preventTimeScale);
 
-		floatingLabel.GetComponent<CanvasGroup>().DOFade (0f, 1.5f).SetDelay(fadeDelay);
-		floatingLabel.transform.DOLocalMoveY (80, 1).SetRelative(true);
+		floatingLabel.GetComponent<CanvasGroup>().DOFade (0f, 1.5f).SetDelay(fadeDelay).SetUpdate(UpdateType.Normal, preventTimeScale);
+		floatingLabel.transform.DOLocalMoveY (80, 1).SetRelative(true).SetUpdate(UpdateType.Normal, preventTimeScale);
 		Destroy (floatingLabel.gameObject, 3 + fadeDelay);
+        DOVirtual.DelayedCall(3, () => {
+            floatingLabels.Remove(floatingLabel);
+        }).SetUpdate(UpdateType.Normal, preventTimeScale);;
 	}
 }

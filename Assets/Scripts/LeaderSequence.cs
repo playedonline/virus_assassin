@@ -40,12 +40,13 @@ public class LeaderSequence : MonoBehaviour {
         smokePS.transform.parent = null;
         smokePS.transform.localPosition = new Vector3(hostFigure.transform.localPosition.x, hostFigure.transform.localPosition.y - 0.5f);
 
+        Vector3 cameraPos = Camera.main.transform.localPosition;
 
         DOTween.Sequence().Insert(0f,
                 DOTween.To(value => Time.timeScale = value, 1, 0, 0.3f).SetEase(Ease.InCubic)
         ).InsertCallback(0.4f, () => {
             DOTween.Kill(Camera.main.transform, false);
-            Camera.main.transform.DOLocalMove(new Vector3(hostFigure.transform.localPosition.x, hostFigure.transform.localPosition.y, Camera.main.transform.localPosition.z), 0.3f).SetUpdate(UpdateType.Normal, true);
+            Camera.main.transform.DOLocalMove(new Vector3(hostFigure.transform.localPosition.x, hostFigure.transform.localPosition.y, Camera.main.transform.localPosition.z), 1f).SetUpdate(UpdateType.Normal, true);
         }).InsertCallback(0.8f, () => {
             DOTween.Kill(Camera.main, false);
             Camera.main.DOOrthoSize(6, 0.6f).SetEase(Ease.OutBack).SetUpdate(UpdateType.Normal, true);
@@ -72,7 +73,9 @@ public class LeaderSequence : MonoBehaviour {
             bottomBG.transform.DOLocalMove(bottomBGHiddenPos, 0.4f).SetUpdate(UpdateType.Normal, true);
             image.transform.DOLocalMove(imageHiddenPos, 0.5f).SetUpdate(UpdateType.Normal, true);
             text.transform.DOLocalMove(textHiddenPos, 0.4f).SetUpdate(UpdateType.Normal, true);
-        }).InsertCallback(4.3f, () => {
+        }).Insert(4.3f,
+            Camera.main.transform.DOLocalMove(cameraPos, 1f).SetUpdate(UpdateType.Normal, true)
+        ).InsertCallback(5.3f, () => {
             DOTween.To(value => Time.timeScale = value, 0, 1, 0.3f).SetEase(Ease.InCubic).SetUpdate(UpdateType.Normal, true);
             GameManager.Instance.scoreText.gameObject.SetActive(true);
             GameManager.Instance.targetPointer.gameObject.SetActive(true);
