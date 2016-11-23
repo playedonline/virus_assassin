@@ -1,8 +1,8 @@
-using UnityEngine;
 using DG.Tweening;
+using UnityEngine;
 using UnityEngine.UI;
 
-public class StartAnimation : MonoBehaviour{
+public class StartSequence : MonoBehaviour{
     public Image blackBG;
     public Image kjBig;
     public Image bubble;
@@ -18,7 +18,7 @@ public class StartAnimation : MonoBehaviour{
     private string text;
 
     private float typeDelay = 0.02f;
-    private float skullDelay = 1f;
+    private float skullDelay = 0.6f;
 
     public void Animation() {
         text = bubbleText.text;
@@ -30,26 +30,54 @@ public class StartAnimation : MonoBehaviour{
         bubbleHiddenPos = bubble.transform.localPosition;
 
         GameObject kjFigureGO = Instantiate(Resources.Load("KJUtemp")) as GameObject;
+        SpriteRenderer whiteGrad = kjFigureGO.transform.Find("WhiteGradient").GetComponent<SpriteRenderer>();
+        SpriteRenderer kjImage = kjFigureGO.transform.Find("KJImage").GetComponent<SpriteRenderer>();
+        Vector3 whiteGradHiddenPos = whiteGrad.transform.localPosition;
+        Vector3 kjImageHiddenPos = kjImage.transform.localPosition;
 
-        DOTween.Sequence().Insert(
-            1f, Camera.main.DOOrthoSize (4, 0.6f).SetUpdate(UpdateType.Normal, true).SetEase(Ease.OutBack)
-        ).Insert(
-            1.8f, blackBG.transform.DOLocalMove(blackBGPos, 0.4f).SetEase(Ease.InExpo)
-        ).Insert(
-            1.9f, kjBig.transform.DOLocalMove(kjBigPos, 0.6f).SetEase(Ease.InExpo)
-        ).Insert(
-            2.4f, bubble.transform.DOLocalMove(bubblePos, 0.3f).SetEase(Ease.InExpo)
-        ).Insert(
-            2.6f, bubble.transform.DOScale(Vector3.one, 0.1f).SetEase(Ease.InExpo)
-        ).InsertCallback(2.7f,
+        DOTween.Sequence().Insert(0,
+                whiteGrad.transform.DOLocalMoveY(5.57f, 1).SetEase(Ease.Linear)
+        ).Insert(1f,
+                whiteGrad.transform.DOScaleX(60, 0.5f).SetEase(Ease.OutBack)
+        ).Insert(1.4f,
+                kjImage.transform.DOLocalMoveY(0, 0.5f).SetEase(Ease.Linear)
+        ).Insert(1.6f,
+                kjImage.transform.DOScaleX(1, 0.5f).SetEase(Ease.OutBack)
+        ).Insert(2f,
+                Camera.main.DOOrthoSize (4, 0.6f).SetUpdate(UpdateType.Normal, true).SetEase(Ease.OutBack)
+        ).Insert(2f,
+                whiteGrad.DOFade(0, 0.4f).OnComplete(() => {
+                    whiteGrad.transform.localPosition = whiteGradHiddenPos;
+                    whiteGrad.transform.DOScaleX(10, 0).SetUpdate(UpdateType.Normal, true);
+                    whiteGrad.DOFade(1, 0).SetUpdate(UpdateType.Normal, true);
+                })
+        ).Insert(2.6f,
+                blackBG.transform.DOLocalMove(blackBGPos, 0.4f).SetEase(Ease.InExpo)
+        ).Insert(2.8f,
+            kjBig.transform.DOLocalMove(kjBigPos, 0.6f).SetEase(Ease.InExpo)
+        ).Insert(3.3f,
+                bubble.transform.DOLocalMove(bubblePos, 0.3f).SetEase(Ease.InExpo)
+        ).Insert(3.4f,
+                bubble.transform.DOScale(Vector3.one, 0.1f).SetEase(Ease.InExpo)
+        ).InsertCallback(3.7f,
             TypeAnimation
-        ).InsertCallback(4f + TypeAnimationDuration(), () => {
+        ).InsertCallback(5f + TypeAnimationDuration(), () => {
             Camera.main.DOOrthoSize (10, 0.6f).SetUpdate(UpdateType.Normal, true);
             blackBG.transform.DOLocalMove(blackBGHiddenPos, 0.5f).SetUpdate(UpdateType.Normal, true);
             kjBig.transform.DOLocalMove(kjBigHiddenPos, 0.5f).SetUpdate(UpdateType.Normal, true);
             bubble.transform.DOLocalMove(bubbleHiddenPos, 0.5f).SetUpdate(UpdateType.Normal, true);
             bubble.transform.DOScale(Vector3.zero, 0.4f).SetUpdate(UpdateType.Normal, true);
-        }).InsertCallback(4.6f + TypeAnimationDuration(), () => {
+        }).Insert(5.3f + TypeAnimationDuration(),
+                whiteGrad.transform.DOLocalMoveY(5.57f, 0.25f).SetEase(Ease.Linear)
+        ).Insert(5.55f + TypeAnimationDuration(),
+                whiteGrad.transform.DOScaleX(60, 0.125f).SetEase(Ease.Linear)
+        ).Insert(5.65f + TypeAnimationDuration(),
+                kjImage.transform.DOScaleX(0.1f, 0.125f).SetEase(Ease.OutBack)
+        ).Insert(5.75f + TypeAnimationDuration(),
+                kjImage.transform.DOLocalMoveY(kjImageHiddenPos.y, 0.125f).SetEase(Ease.OutBack)
+        ).Insert(5.85f + TypeAnimationDuration(),
+                whiteGrad.DOFade(0, 0.1f)
+        ).InsertCallback(6.4f + TypeAnimationDuration(), () => {
             Destroy(kjFigureGO);
             Destroy(this.gameObject);
             GameManager.Instance.StartGame();
