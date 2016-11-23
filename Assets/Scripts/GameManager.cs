@@ -181,7 +181,8 @@ public class GameManager : MonoBehaviour {
 
 
     public void OnVirusDie(){
-        targetPointer.Init (null, null);
+        if(targetPointer != null)
+            targetPointer.Init (null, null);
 		gameOverScreen.Show (false);
 		isGameOver = true;
     }
