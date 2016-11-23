@@ -7,14 +7,15 @@ public class HostFigure : MonoBehaviour {
     public float speed = 3;
 	public HostFigureType hostType;
 
-    private bool m_isInfected = false;
+	public bool m_isInfected = false;
+	public bool isDead = false;
     private SpriteRenderer m_spriteRenderer;
 	public Transform visualContainer;
 	private Animator m_animator;
     private List<Vector3> m_pathPoints;
     private int pointIndex = 0;
     private Tweener currentMoveTween;
-    private Healthbar healthBar;
+    public Healthbar healthBar;
 
 	public void Init(HostFigureType hostType){
         this.hostType = hostType;
@@ -34,7 +35,7 @@ public class HostFigure : MonoBehaviour {
         MoveToNextPoint();
     }
 
-    private void MoveToNextPoint(){
+    private void MoveToNextPoint(){		
         pointIndex += 1;
         Vector3 nextPoint = m_pathPoints[pointIndex];
         m_spriteRenderer.transform.localScale = new Vector3 (nextPoint.x - transform.localPosition.x < 0 ? 1 : -1, 1, 1);
@@ -51,7 +52,7 @@ public class HostFigure : MonoBehaviour {
     }
 
     public void Infect() {
-        if(m_isInfected)
+		if(m_isInfected || isDead)
             return;
 
 		healthBar.Init (3);
@@ -68,11 +69,20 @@ public class HostFigure : MonoBehaviour {
 
     private void Die() {
 
+		if (isDead)
+			return;
+		
 		if (GetComponentInChildren<Virus> () != null)
 			GetComponentInChildren<Virus> ().Die ();
 
+		isDead = true;
         GameManager.Instance.OnHostFigureDie(this);
-        Destroy(gameObject);
+		UpdateAnimationState ("Death");
+		currentMoveTween.Kill ();
+		healthBar.Disable ();
+		transform.parent = null;
+
+//        Destroy(gameObject);
     }
 
 	void TurnToZombie()
@@ -103,10 +113,9 @@ public class HostFigure : MonoBehaviour {
     }
 
     void Update() {
-        m_spriteRenderer.transform.rotation = Quaternion.identity;
         m_spriteRenderer.sortingOrder = -Mathf.RoundToInt(transform.localPosition.y * 1000);
 
-        if (m_isInfected && healthBar.isEmpty)
+		if (m_isInfected && healthBar.isEmpty && !isDead)
             Die();
     }
 
