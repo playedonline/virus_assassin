@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour {
 	public static float VERTICAL_TILES = 4;
 	public const float comboActiveThreshold = 1.2f;
     public static bool startAnimationShown = true;
-    public static bool leaderAnimationShown = false;
+    private bool leaderAnimationShown = false;
 
 	public static GameManager Instance;
 	public int score;
@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour {
     private Object m_hostFigurePrefab;
 	public Bounds spawnableArea;
 	public HostFigure mainTarget;
-    private OffscreenPointer targetPointer;
+    public OffscreenPointer targetPointer;
     public Virus player;
 	public Text scoreText;
 	private Canvas canvas;
@@ -53,7 +53,6 @@ public class GameManager : MonoBehaviour {
 		int tries = 0;
 		while(y < spawnableArea.max.y){
 			++tries;
-			Debug.Log ("spawn!");
             for(int i = 0 ; i < Random.Range(1, 2) ; i++) {
                 Vector3 pos;
                 for(int j = 0 ; i < 100 ; i++){
@@ -73,7 +72,6 @@ public class GameManager : MonoBehaviour {
 				y += spawnTileBounds.size.y;
             }
         }
-		      
 
         comboText = GameObject.Find ("comboText").GetComponent<Text> ();
         comboCanvasGroup = GameObject.Find ("ComboMeter").GetComponent<CanvasGroup> ();
@@ -212,8 +210,7 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    public void SpawnNewSoldier(Vector3 position){
-		Debug.Log (position);
+    public void SpawnNewSoldier(Vector3 position){		
         GameObject hostFigureGO = Instantiate(m_hostFigurePrefab) as GameObject;
         hostFigureGO.transform.localPosition = position;
         HostFigure hostFigure = hostFigureGO.GetComponent<HostFigure>();
