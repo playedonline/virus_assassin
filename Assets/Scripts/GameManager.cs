@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour {
 	public bool isGameOver;
 	public Text comboText;
 	public CanvasGroup comboCanvasGroup;
-	public const int powerMax = 10;
+	public const int powerMax = 5;
     void Awake(){
 		GameManager.Instance = this;
 		isGameOver = false;
@@ -125,7 +125,7 @@ public class GameManager : MonoBehaviour {
 		
 		scoreText.text = score.ToString () + " / " + powerMax;
 
-        if(hostFigures.Count < 14 && Random.value < 0.01)
+		if (hostFigures.Count < 30)
             ReSpawnSoldier();
 
 //		if (Time.time - comboStartTime > comboActiveThreshold && comboCounter > 0) {
@@ -136,10 +136,10 @@ public class GameManager : MonoBehaviour {
 //			comboCounter = 0;
 //		}
 
-        if(player != null && mainTarget != null && !leaderAnimationShown && Vector3.Distance(player.transform.localPosition, mainTarget.transform.localPosition) < 9){
-            leaderAnimationShown = true;
-            DisplayLeaderSequence();
-        }
+//        if(player != null && mainTarget != null && !leaderAnimationShown && Vector3.Distance(player.transform.localPosition, mainTarget.transform.localPosition) < 9){
+//            leaderAnimationShown = true;
+//            DisplayLeaderSequence();
+//        }
 	}
 
     public void OnHostFigureDie(HostFigure hf){
@@ -159,7 +159,7 @@ public class GameManager : MonoBehaviour {
 			ShowFloatingPowerText (hf.transform.position + Vector3.up * 2, score.ToString(), 0.8f, true, true);
 
 			if (score == powerMax && targetPointer == null) {
-				ShowFloatingText (player.transform.position + Vector3.up * 3,  "POWERED UP!", 0.8f, false,true, 1);
+				ShowFloatingText (player.transform.position + Vector3.up * 3,  "POWERED UP & READY TO ATTACK!", 0.8f, false,true, 1);
 				SpawnNewTarget ();
 			}
 		}
@@ -248,6 +248,9 @@ public class GameManager : MonoBehaviour {
 		targetPointer.transform.parent = transform;
 		
 		targetPointer.Init (mainTarget.transform, player.transform);
+
+		leaderAnimationShown = true;
+		DisplayLeaderSequence();
 	}
 
 	public void ShowFloatingText(Vector3 origin, string text, float scaleFactor = 1, bool punch = false, bool rotate = false, float fadeDelay = 0.3f)

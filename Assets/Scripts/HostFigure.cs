@@ -160,6 +160,12 @@ public class HostFigure : MonoBehaviour {
 		SpawnExplsionPS ();
 
 		DOVirtual.DelayedCall (2, () => {
+
+			GameObject ps = Instantiate (Resources.Load<GameObject> ("BigBoom"));
+			ps.transform.position = transform.position;
+			ps.SetActive (true);
+			Destroy (ps.gameObject, 4);
+
 			isDead = false;
 			isBoss = false;
 			MoveToNextPoint ();

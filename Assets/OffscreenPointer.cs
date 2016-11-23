@@ -43,10 +43,10 @@ public class OffscreenPointer : MonoBehaviour {
 			//Vector3 offset = new Vector3 (Mathf.Cos (pointerAngle * Mathf.Deg2Rad), Mathf.Sin (pointerAngle * Mathf.Deg2Rad)) * -2;
 			//Debug.Log (pointerAngle +"," + offset + "," +targetViewportPosition);
 			transform.position = Camera.main.ViewportToWorldPoint (targetViewportPosition);// + offset;
-			gameObject.SetActive (true);
+			gameObject.transform.localScale = Vector3.one * 2;
 		} else {
 			transform.position = target.position;
-			gameObject.SetActive (false);
+			gameObject.transform.localScale = Vector3.zero;
 		}
 	}
 }

@@ -57,7 +57,7 @@ public class Virus : MonoBehaviour {
 		if (currentHost == null && healthbar.isEmpty)
 			Die ();		
 
-		transform.localScale = Vector3.one * (0.7f + Mathf.Min(GameManager.Instance.score / 10.0f, 1.0f));
+		transform.localScale = Vector3.one * (0.7f + Mathf.Min(GameManager.Instance.score / GameManager.powerMax, 0.8f));
 	}
 		
 	public void Die()
