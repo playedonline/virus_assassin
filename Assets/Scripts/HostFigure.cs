@@ -16,7 +16,6 @@ public class HostFigure : MonoBehaviour {
     private Tweener currentMoveTween;
     private Healthbar healthBar;
 
-
 	public void Init(HostFigureType hostType){
         this.hostType = hostType;
         UpdateAnimationState ("Walk Front");
@@ -57,12 +56,9 @@ public class HostFigure : MonoBehaviour {
 
 		healthBar.Init (3);
 
-
 		GameManager.Instance.OnHostFigureInfected (this);
-				
+		DOVirtual.DelayedCall (0.5f, TurnToZombie);		
         m_isInfected = true;        
-		hostType = HostFigureType.Zombie;
-		UpdateAnimationState ("Walk Front");
 		m_spriteRenderer.transform.DOPunchScale (Vector3.one * 0.4f, 0.4f);
 
     }
@@ -75,6 +71,12 @@ public class HostFigure : MonoBehaviour {
         GameManager.Instance.OnHostFigureDie(this);
         Destroy(gameObject);
     }
+
+	void TurnToZombie()
+	{
+		hostType = HostFigureType.Zombie;
+		UpdateAnimationState ("Walk Front");		
+	}
 
     void Awake() {
         visualContainer = transform.Find ("Container");
@@ -104,8 +106,11 @@ public class HostFigure : MonoBehaviour {
             Die();
     }
 
-	public void OnHit()
+	public void OnHit(Vector3 knockbackForce)
 	{
+		currentMoveTween.Kill ();
+		--pointIndex;
+		transform.DOMove (knockbackForce, 0.5f).SetRelative (true).OnComplete(MoveToNextPoint);
 		Infect ();
 	}
 }
