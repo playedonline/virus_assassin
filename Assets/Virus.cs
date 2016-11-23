@@ -36,6 +36,7 @@ public class Virus : MonoBehaviour {
 		LeaveHost ();
 		isFlying = true;
 		lastLaunchTime = Time.time;
+		DarkTonic.MasterAudio.MasterAudio.PlaySound ("jump");
 
 	}
 
@@ -53,17 +54,7 @@ public class Virus : MonoBehaviour {
 			SetIdleOutOfHost ();
 
 		if (currentHost == null && healthbar.isEmpty)
-			Die ();
-
-//        if(transform.localPosition.x < GameManager.Instance.TopLeft.x)
-//            body.velocity = new Vector2(Mathf.Abs(body.velocity.x), body.velocity.y);
-//        else if(transform.localPosition.x > GameManager.Instance.BottomRight.x)
-//            body.velocity = new Vector2(-Mathf.Abs(body.velocity.x), body.velocity.y);
-//
-//        if(transform.localPosition.y < GameManager.Instance.BottomRight.y)
-//            body.velocity = new Vector2(body.velocity.x, Mathf.Abs(body.velocity.y));
-//		else if(transform.localPosition.y > GameManager.Instance.TopLeft.y)
-//            body.velocity = new Vector2(body.velocity.x, -Mathf.Abs(body.velocity.y));
+			Die ();		
 	}
 		
 	public void Die()
@@ -101,7 +92,10 @@ public class Virus : MonoBehaviour {
 		
 		HostFigure hostHit = other.GetComponentInParent<HostFigure> ();
 		if (hostHit != null && (previousHost == null || hostHit != previousHost)) {
-			hostHit.OnHit ();
+			Vector2 knockBackForce = (other.transform.position - transform.position).normalized;
+			Debug.Log (body.velocity.magnitude);
+			knockBackForce *= Mathf.Clamp(body.velocity.magnitude/5, 0, 3);
+			hostHit.OnHit (knockBackForce);
 			SetHost (hostHit);
 		}
 	}
