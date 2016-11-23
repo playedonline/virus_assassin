@@ -39,10 +39,7 @@ public class GameManager : MonoBehaviour {
 
 		canvas = GameObject.Find ("Canvas").GetComponent<Canvas> ();
         m_hostFigurePrefab = Resources.Load("Soldier");
-
-        targetPointer = (Instantiate(Resources.Load("TargetPointer")) as GameObject).GetComponent<OffscreenPointer>();
-        targetPointer.transform.parent = transform;
-
+		        
         Application.targetFrameRate = 60;
 
 		spawnableArea.min = new Vector3 (-38, -6, 0);
@@ -74,9 +71,6 @@ public class GameManager : MonoBehaviour {
             }
         }
 
-//        comboText = GameObject.Find ("comboText").GetComponent<Text> ();
-//        comboCanvasGroup = GameObject.Find ("ComboMeter").GetComponent<CanvasGroup> ();
-//
         if(startAnimationShown)
             StartGame();
         else {
@@ -114,7 +108,7 @@ public class GameManager : MonoBehaviour {
         Time.timeScale = 1;
         player = (Instantiate(Resources.Load("Virus")) as GameObject).GetComponent<Virus> ();
 		Camera.main.GetComponent<SmoothCameraFollow> ().target = player.transform;
-        SpawnNewTarget ();
+        //SpawnNewTarget ();
     }
 
 	void Update()
@@ -149,12 +143,17 @@ public class GameManager : MonoBehaviour {
     }
 		
     public void OnHostFigureInfected(HostFigure hf){
-		if (hf.hostType == HostFigureType.Trump) {
-			//score += 10;
+		if (hf.hostType == HostFigureType.Trump) {			
 		} else {
 			score += 1;
 			score = Mathf.Min (score, 10);
 			ShowFloatingPowerText (hf.transform.position + Vector3.up * 3, score.ToString(), 0.8f, true, true);
+
+			if (score == 10 && targetPointer == null) {
+				ShowFloatingText (player.transform.position + Vector3.up*3,  "READY! ATTACK TARGET!", 1, true,true);
+				SpawnNewTarget ();
+
+			}
 		}
 		
         //UpdateComboCounter (hf.transform.position + Vector3.up * 3f);
@@ -222,6 +221,9 @@ public class GameManager : MonoBehaviour {
 
 	public void SpawnNewTarget()
 	{		
+		targetPointer = (Instantiate (Resources.Load ("TargetPointer")) as GameObject).GetComponent<OffscreenPointer> ();
+		targetPointer.transform.parent = transform;
+
 		mainTarget = Instantiate<GameObject>(Resources.Load<GameObject>("Soldier")).GetComponent<HostFigure>();
 		mainTarget.name = "Trump";
 		Vector3 randomPos = new Vector3 (Random.Range (spawnableArea.min.x, spawnableArea.max.x), Random.Range (spawnableArea.min.y, spawnableArea.min.y), 0);
@@ -267,7 +269,7 @@ public class GameManager : MonoBehaviour {
 		if (punch)
 			floatingLabel.transform.DOPunchScale (Vector3.one * 0.3f, 1);
 
-		floatingLabel.GetComponent<CanvasGroup>().DOFade (0f, 1.5f);
+		floatingLabel.GetComponent<CanvasGroup>().DOFade (0f, 1.5f).SetDelay(0.3f);
 		floatingLabel.transform.DOLocalMoveY (80, 1).SetRelative(true);
 		Destroy (floatingLabel.gameObject, 3);
 	}
