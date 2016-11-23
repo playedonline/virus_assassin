@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour {
 	public static float HORIZONTAL_TILES = 8;
 	public static float VERTICAL_TILES = 4;
 	public const float comboActiveThreshold = 1.2f;
-    public static bool startAnimationShown = false;
+    public static bool startAnimationShown = true;
     private bool leaderAnimationShown = false;
 
 	public static GameManager Instance;
@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour {
 	public bool isGameOver;
 	public Text comboText;
 	public CanvasGroup comboCanvasGroup;
-
+	public const int powerMax = 10;
     void Awake(){
 		GameManager.Instance = this;
 		isGameOver = false;
@@ -123,7 +123,7 @@ public class GameManager : MonoBehaviour {
 		if (isGameOver)
 			return;
 		
-		scoreText.text = score.ToString ();
+		scoreText.text = score.ToString () + " / " + powerMax;
 
         if(hostFigures.Count < 14 && Random.value < 0.01)
             ReSpawnSoldier();
@@ -155,13 +155,12 @@ public class GameManager : MonoBehaviour {
 		if (hf.hostType == HostFigureType.Trump) {			
 		} else {
 			score += 1;
-			score = Mathf.Min (score, 10);
+			score = Mathf.Min (score, powerMax);
 			ShowFloatingPowerText (hf.transform.position + Vector3.up * 2, score.ToString(), 0.8f, true, true);
 
-			if (score == 2 && targetPointer == null) {
-				ShowFloatingText (player.transform.position + Vector3.up * 3,  "ATTACK TARGET!", 0.8f, false,true, 1);
+			if (score == powerMax && targetPointer == null) {
+				ShowFloatingText (player.transform.position + Vector3.up * 3,  "POWERED UP!", 0.8f, false,true, 1);
 				SpawnNewTarget ();
-
 			}
 		}
 		

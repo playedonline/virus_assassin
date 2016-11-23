@@ -132,6 +132,7 @@ public class HostFigure : MonoBehaviour {
 			healthBar.healthLeft -= GameManager.Instance.score;
 			GameManager.Instance.player.body.velocity *= -1;
 			GameManager.Instance.score = 0;
+			SpawnExplsionPS ();
 		}
 	}
 
@@ -146,12 +147,17 @@ public class HostFigure : MonoBehaviour {
 		collider.radius = 2.04f;
 	}
 
-	public void RevertBossMode()
+	void SpawnExplsionPS()
 	{
 		GameObject ps = Instantiate (Resources.Load<GameObject> ("MecExplodePS"));
 		ps.transform.position = transform.position + Vector3.up * 1.5f;
 		ps.SetActive (true);
 		Destroy (ps.gameObject, 4);
+	}
+
+	public void RevertBossMode()
+	{
+		SpawnExplsionPS ();
 
 		DOVirtual.DelayedCall (2, () => {
 			isDead = false;
