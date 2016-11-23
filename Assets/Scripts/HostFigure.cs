@@ -55,9 +55,12 @@ public class HostFigure : MonoBehaviour {
             return;
 
 		healthBar.Init (3);
-
+		GameObject splatPS = Instantiate (Resources.Load ("SplatPS") as GameObject);
+		splatPS.transform.position = transform.position + Vector3.up;
+		Destroy (splatPS, 2);
 		GameManager.Instance.OnHostFigureInfected (this);
-		DOVirtual.DelayedCall (0.5f, TurnToZombie);		
+		//DOVirtual.DelayedCall (0.5f, TurnToZombie);		
+		TurnToZombie();
         m_isInfected = true;        
 		m_spriteRenderer.transform.DOPunchScale (Vector3.one * 0.4f, 0.4f);
 
@@ -87,9 +90,6 @@ public class HostFigure : MonoBehaviour {
         healthBar.Disable ();
 		hostType = HostFigureType.Soldier;
 		UpdateAnimationState ("Walk Front");
-
-		// temp breathing animation
-		//m_spriteRenderer.transform.DOScale(Vector3.one * 0.07f, 1).SetEase(Ease.Linear).SetLoops(-1, LoopType.Yoyo).SetRelative(true).SetDelay(Random.value);
     }
 
 	private void UpdateAnimationState(string newState)

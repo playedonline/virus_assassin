@@ -92,8 +92,7 @@ public class Virus : MonoBehaviour {
 		
 		HostFigure hostHit = other.GetComponentInParent<HostFigure> ();
 		if (hostHit != null && (previousHost == null || hostHit != previousHost)) {
-			Vector2 knockBackForce = (other.transform.position - transform.position).normalized;
-			Debug.Log (body.velocity.magnitude);
+			Vector2 knockBackForce = body.velocity.normalized;
 			knockBackForce *= Mathf.Clamp(body.velocity.magnitude/5, 0, 3);
 			hostHit.OnHit (knockBackForce);
 			SetHost (hostHit);

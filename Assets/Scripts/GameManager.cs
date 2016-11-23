@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour {
 	public static float HORIZONTAL_TILES = 8;
 	public static float VERTICAL_TILES = 4;
 	public const float comboActiveThreshold = 1.2f;
-    public static bool startAnimationShown = false;
+    public static bool startAnimationShown = true;
 	private static List<HostFigureType> hostFigureTypesShown = new List<HostFigureType>();
 
 	public static GameManager Instance;
