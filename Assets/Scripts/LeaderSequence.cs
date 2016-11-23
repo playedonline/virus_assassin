@@ -20,7 +20,7 @@ public class LeaderSequence : MonoBehaviour {
     private float typeDelay = 0.05f;
     private float skullDelay = 1f;
 
-    public void Animation(HostFigure hostFigure) {
+	public void Animation(HostFigure hostFigure, System.Action callback) {
         topBGHiddenPos = topBG.transform.localPosition;
         bottomBGHiddenPos = bottomBG.transform.localPosition;
         imageHiddenPos = image.transform.localPosition;
@@ -55,7 +55,9 @@ public class LeaderSequence : MonoBehaviour {
             hostFigure.SetHostType(HostFigureType.TrumpMAC);
         }).InsertCallback(3.2f, () => {
             DOTween.To(value => Time.timeScale = value, 0, 1, 0.3f).SetEase(Ease.InCubic).SetUpdate(UpdateType.Normal, true);
+			if (callback != null);
+				callback();
             Destroy(gameObject);
         }).SetUpdate(UpdateType.Normal, true);
-    }
+	}
 }

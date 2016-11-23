@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour {
 	private Canvas canvas;
     public Sprite bgSprite;
     private List<HostFigure> hostFigures = new List<HostFigure>();
-	private int comboCounter;
+	public int comboCounter;
 	private float comboStartTime;
     public GameOver gameOverScreen;
 	public bool isGameOver;
@@ -100,9 +100,17 @@ public class GameManager : MonoBehaviour {
         animationGO.transform.parent = canvas.transform;
         animationGO.transform.localPosition = Vector3.zero;
         animationGO.transform.localScale = Vector3.one;
-        animationGO.GetComponent<LeaderSequence>().Animation(mainTarget);
+		animationGO.GetComponent<LeaderSequence>().Animation(mainTarget, ShowBossUI);
+
     }
 
+	void ShowBossUI()
+	{
+		GameObject bossBar = GameObject.Find ("BossBar");
+		bossBar.GetComponent<CanvasGroup> ().DOFade (1, 0.5f);
+		mainTarget.SetToBossMode (bossBar.GetComponentInChildren<Healthbar> ());
+		
+	}
     public void StartGame(){
         Time.timeScale = 1;
         player = (Instantiate(Resources.Load("Virus")) as GameObject).GetComponent<Virus> ();
@@ -120,13 +128,13 @@ public class GameManager : MonoBehaviour {
         if(hostFigures.Count < 14 && Random.value < 0.01)
             ReSpawnSoldier();
 
-		if (Time.time - comboStartTime > comboActiveThreshold && comboCounter > 0) {
-			// combo broken
-			if (comboCounter > 1)
-				ShowFloatingText (player.transform.position + Vector3.up * 2, "COMBO BROKEN" , 0.8f, false, true);
-			score += comboCounter;
-			comboCounter = 0;
-		}
+//		if (Time.time - comboStartTime > comboActiveThreshold && comboCounter > 0) {
+//			// combo broken
+//			if (comboCounter > 1)
+//				ShowFloatingText (player.transform.position + Vector3.up * 2, "COMBO BROKEN" , 0.8f, false, true);
+//			//score += comboCounter;
+//			comboCounter = 0;
+//		}
 
         if(player != null && mainTarget != null && !leaderAnimationShown && Vector3.Distance(player.transform.localPosition, mainTarget.transform.localPosition) < 9){
             leaderAnimationShown = true;
@@ -139,14 +147,18 @@ public class GameManager : MonoBehaviour {
     }
 
     public void OnHostFigureInfected(HostFigure hf){
-        if (hf.hostType == HostFigureType.Trump) {
-            score += 10;
-            SpawnNewTarget ();
-        }
-
-        UpdateComboCounter (hf.transform.position + Vector3.up * 3f);
-        if (comboCounter % 5 == 0 && comboCounter > 0)
-            ShowFloatingText (player.transform.position + Vector3.up * 3, "AWESOME! +" + 5, 0.8f, false, true);
+		if (hf.hostType == HostFigureType.Trump) {
+			//score += 10;
+			SpawnNewTarget ();
+		} else {
+			score += 1;
+			score = Mathf.Min (score, 10);
+			ShowFloatingText (hf.transform.position + Vector3.up * 3, "+1 POWER", 0.8f, true, true);
+		}
+		
+        //UpdateComboCounter (hf.transform.position + Vector3.up * 3f);
+//        if (comboCounter % 5 == 0 && comboCounter > 0)
+//            ShowFloatingText (player.transform.position + Vector3.up * 3, "AWESOME! +" + 5, 0.8f, false, true);
     }
 
     private void UpdateComboCounter(Vector3 newPosition)

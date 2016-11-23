@@ -2,7 +2,7 @@
 using DG.Tweening;
 
 public class Virus : MonoBehaviour {
-	Rigidbody2D body;
+	public Rigidbody2D body;
 	Animator animator;
 	Transform spriteTransform;
 	HostFigure currentHost;
@@ -56,6 +56,8 @@ public class Virus : MonoBehaviour {
 
 		if (currentHost == null && healthbar.isEmpty)
 			Die ();		
+
+		transform.localScale = Vector3.one * (0.7f + Mathf.Min(GameManager.Instance.score / 10.0f, 1.0f));
 	}
 		
 	public void Die()

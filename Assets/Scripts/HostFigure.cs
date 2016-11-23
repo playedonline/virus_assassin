@@ -16,6 +16,7 @@ public class HostFigure : MonoBehaviour {
     private int pointIndex = 0;
     private Tweener currentMoveTween;
     public Healthbar healthBar;
+	public bool isBoss;
 
 	public void Init(HostFigureType hostType){
         this.hostType = hostType;
@@ -120,11 +121,26 @@ public class HostFigure : MonoBehaviour {
     }
 
 	public void OnHit(Vector3 knockbackForce)
+	{		
+		if (!isBoss) {
+			currentMoveTween.Kill ();
+			--pointIndex;
+			transform.DOMove (knockbackForce, 0.5f).SetRelative (true).OnComplete(MoveToNextPoint);
+			Infect ();
+		}
+		else {
+			healthBar.healthLeft -= GameManager.Instance.score;
+			GameManager.Instance.player.body.velocity *= -1;
+			GameManager.Instance.score = 0;
+		}
+	}
+
+	public void SetToBossMode(Healthbar bossHealthBar)
 	{
-		currentMoveTween.Kill ();
-		--pointIndex;
-		transform.DOMove (knockbackForce, 0.5f).SetRelative (true).OnComplete(MoveToNextPoint);
-		Infect ();
+		Destroy (healthBar.gameObject);
+		healthBar = bossHealthBar;
+		bossHealthBar.Init (30, false);
+		isBoss = true;
 	}
 }
 
