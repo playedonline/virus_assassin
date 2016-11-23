@@ -43,6 +43,9 @@ public class HostFigure : MonoBehaviour {
 
         float duration = Vector3.Distance(transform.localPosition, nextPoint) / speed;
         currentMoveTween = transform.DOLocalMove(nextPoint, duration).SetEase(Ease.Linear).OnComplete(() => {
+            if(isDead)
+            	return;
+
             if(m_pathPoints.Count - 1 <= pointIndex){
                 m_pathPoints.Reverse();
                 pointIndex = 0;
