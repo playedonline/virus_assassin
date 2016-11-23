@@ -76,9 +76,13 @@ public class HostFigure : MonoBehaviour {
 		if (isDead)
 			return;
 		
-		if (GetComponentInChildren<Virus> () != null)
-			GetComponentInChildren<Virus> ().Die ();
+		if (GetComponentInChildren<Virus> () != null) {
+			GetComponentInChildren<Virus> ().Launch (Vector3.up, 90);
+		}			
 
+		if (hostType == HostFigureType.Zombie)
+			DarkTonic.MasterAudio.MasterAudio.PlaySound ("sploosh");
+		
 		isDead = true;
         GameManager.Instance.OnHostFigureDie(this);
 		UpdateAnimationState ("Death");
@@ -164,7 +168,7 @@ public class HostFigure : MonoBehaviour {
 
 		DOVirtual.DelayedCall (0.8f, () => {
 			GameObject ps = Instantiate (Resources.Load<GameObject> ("BigBoom"));
-			ps.transform.position = transform.position;
+			ps.transform.position = transform.position + Vector3.down * 2;
 			ps.SetActive (true);
 			Destroy (ps.gameObject, 4);
 		});
@@ -172,6 +176,7 @@ public class HostFigure : MonoBehaviour {
 		DOVirtual.DelayedCall (1.3f, () => {
 			isDead = false;
 			isBoss = false;
+			pointIndex = 0;
 			MoveToNextPoint ();
 			healthBar = GetComponentInChildren<Healthbar> (true);
 			healthBar.Init (3);
